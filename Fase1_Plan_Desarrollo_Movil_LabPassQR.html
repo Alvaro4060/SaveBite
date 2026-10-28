@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 1: Plan del Proceso de Desarrollo Móvil | LabPass QR - UTS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --primary: #0F4C81;
+      --primary-dark: #0A2E50;
+      --primary-light: #2563EB;
+      --secondary: #00AE9D;
+      --secondary-dark: #0E7490;
+      --accent: #F58220;
+      --accent-hover: #EA580C;
+      --success: #10B981;
+      --purple: #8B5CF6;
+      --dark: #0F172A;
+      --text: #334155;
+      --text-muted: #64748B;
+      --bg: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --border-focus: #94A3B8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      line-height: 1.65;
+      padding: 30px 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .document-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 20px 40px -15px rgba(15, 76, 129, 0.15), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ==============================================================
+       PORTADA COLORIDA, MODERNA Y PROFESIONAL
+       ============================================================== */
+    .cover-container {
+      min-height: 1040px;
+      position: relative;
+      background: linear-gradient(145deg, #071E36 0%, #0F4C81 40%, #0A698A 75%, #00AE9D 100%);
+      color: white;
+      padding: 60px 60px 50px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Efectos geométricos decorativos de fondo */
+    .cover-container::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -100px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(0, 174, 157, 0.35) 0%, rgba(245, 130, 32, 0.15) 60%, transparent 80%);
+      border-radius: 50%;
+      filter: blur(40px);
+      z-index: 1;
+    }
+
+    .cover-container::after {
+      content: "";
+      position: absolute;
+      bottom: -150px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(245, 130, 32, 0.25) 0%, rgba(15, 76, 129, 0.2) 60%, transparent 80%);
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 1;
+    }
+
+    .cover-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Encabezado de la portada */
+    .cover-header {
+      text-align: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 25px;
+    }
+
+    .uts-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      padding: 6px 18px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #A7F3D0;
+      margin-bottom: 15px;
+    }
+
+    .cover-institution {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-division {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #E2E8F0;
+      margin-top: 4px;
+    }
+
+    .cover-career {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #5EEAD4;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Bloque central de título */
+    .cover-hero {
+      text-align: center;
+      margin: 45px 0 35px 0;
+    }
+
+    .phase-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #F58220 0%, #EA580C 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 24px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 15px rgba(245, 130, 32, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .cover-main-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #FFFFFF;
+      margin-bottom: 15px;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-app-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(90deg, #FFFFFF 20%, #5EEAD4 60%, #FDBA74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    }
+
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #F1F5F9;
+      max-width: 720px;
+      margin: 0 auto;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    /* Grilla de metadatos */
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 22px;
+      margin-top: 10px;
+    }
+
+    .cover-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .cover-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #FCD34D;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .meta-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .meta-label {
+      color: #CBD5E1;
+      font-weight: 400;
+    }
+
+    .meta-val {
+      font-weight: 700;
+      color: #FFFFFF;
+      text-align: right;
+    }
+
+    .team-list {
+      list-style: none;
+    }
+
+    .team-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .team-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .team-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--secondary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px #5EEAD4;
+      flex-shrink: 0;
+    }
+
+    .team-role-tag {
+      font-size: 0.72rem;
+      background: rgba(0, 174, 157, 0.3);
+      border: 1px solid rgba(94, 234, 212, 0.5);
+      color: #A7F3D0;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: auto;
+      font-weight: 600;
+    }
+
+    .cover-footer {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #94A3B8;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 16px;
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ==============================================================
+       CUERPO DEL REPORTE
+       ============================================================== */
+    .report-body {
+      padding: 60px 65px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 48px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-header:first-of-type {
+      margin-top: 0;
+    }
+
+    .section-badge-num {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 10px rgba(15, 76, 129, 0.25);
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      color: var(--primary-dark);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.18rem;
+      color: var(--primary);
+      margin: 22px 0 12px 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h4 {
+      font-size: 1.02rem;
+      color: #1E293B;
+      font-weight: 700;
+      margin: 14px 0 6px 0;
+    }
+
+    p {
+      color: #475569;
+      margin-bottom: 14px;
+      font-size: 1rem;
+      text-align: justify;
+    }
+
+    .lead-paragraph {
+      font-size: 1.06rem;
+      color: #1E293B;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+
+    /* Tarjetas y Contenedores de Información */
+    .info-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .info-card.teal {
+      border-left-color: var(--secondary);
+      background: #F0FDF4;
+    }
+
+    .info-card.orange {
+      border-left-color: var(--accent);
+      background: #FFFBEB;
+    }
+
+    .info-card.purple {
+      border-left-color: var(--purple);
+      background: #FAF5FF;
+    }
+
+    /* Grilla de Funcionalidades */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(15, 76, 129, 0.08);
+      border-color: #CBD5E1;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .tag-core {
+      background: #EFF6FF;
+      color: #1E40AF;
+      border: 1px solid #BFDBFE;
+    }
+
+    .tag-special {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-desc {
+      font-size: 0.92rem;
+      color: #475569;
+      line-height: 1.55;
+      text-align: left;
+      margin-bottom: 0;
+    }
+
+    /* Tabla de Roles Ágiles */
+    .styled-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 22px 0;
+      font-size: 0.93rem;
+    }
+
+    .styled-table th {
+      background: linear-gradient(90deg, #0F4C81 0%, #153e6b 100%);
+      color: white;
+      padding: 13px 16px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      text-align: left;
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .styled-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+
+    .styled-table tr:nth-child(even) td {
+      background-color: #F8FAFC;
+    }
+
+    .styled-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .role-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .role-po { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .role-sm { background: #E0E7FF; color: #3730A3; border: 1px solid #C7D2FE; }
+    .role-dev { background: #CCFBF1; color: #115E59; border: 1px solid #99F6E4; }
+    .role-backend { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }
+
+    /* Diagramas y Visualizadores */
+    .diagram-container {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    }
+
+    .diagram-caption {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .diagram-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Cajas de Ceremonias Scrum */
+    .scrum-events-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .scrum-event-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .scrum-event-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .scrum-event-time {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .scrum-event-desc {
+      font-size: 0.82rem;
+      color: #64748B;
+      line-height: 1.4;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    /* Puntos clave / Listas con viñetas */
+    .custom-bullet-list {
+      list-style: none;
+      margin: 14px 0;
+    }
+
+    .custom-bullet-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 12px;
+      font-size: 0.98rem;
+      color: #334155;
+    }
+
+    .custom-bullet-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 20px;
+      height: 20px;
+      background: #EFF6FF;
+      color: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      border: 1px solid #BFDBFE;
+    }
+
+    .custom-bullet-list li strong {
+      color: var(--primary-dark);
+    }
+
+    /* Insignias de tecnología */
+    .tech-stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .tech-chip {
+      background: white;
+      border: 1px solid #CBD5E1;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .tech-chip span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .tech-flutter span { background: #02569B; }
+    .tech-firebase span { background: #FFA000; }
+    .tech-scanner span { background: #00AE9D; }
+    .tech-hive span { background: #8B5CF6; }
+
+    /* ==============================================================
+       ESTILOS PARA IMPRESIÓN Y GENERACIÓN DE PDF
+       ============================================================== */
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+      .document-wrapper {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+      .cover-container {
+        min-height: 100vh;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .report-body {
+        padding: 40px 45px;
+      }
+      .section-header {
+        page-break-before: auto;
+      }
+      .info-card, .diagram-container, .features-grid, .styled-table {
+        page-break-inside: avoid;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="document-wrapper">
+
+  <!-- ==============================================================
+       1. PORTADA COLORIDA Y PROFESIONAL
+       ============================================================== -->
+  <div class="cover-container">
+    <div class="cover-content">
+      
+      <!-- Encabezado Institucional -->
+      <div class="cover-header">
+        <div class="uts-pill-badge">
+          <span>UTS</span> • División TIC • 10° Cuatrimestre
+        </div>
+        <div class="cover-institution">Universidad Tecnológica de Salamanca</div>
+        <div class="cover-division">División de Tecnologías de la Información y Comunicación</div>
+        <div class="cover-career">Ingeniería en Desarrollo y Gestión de Software (IDGS)</div>
+      </div>
+
+      <!-- Título de la Fase y Nombre de la Aplicación -->
+      <div class="cover-hero">
+        <div class="phase-badge">Fase 1: Plan del Proceso de Desarrollo Móvil</div>
+        <h2 class="cover-main-title">Ecosistema Móvil Integral de Gestión y Trazabilidad Escolar</h2>
+        <div class="cover-app-name">LabPass QR</div>
+        <p class="cover-subtitle">
+          Sistema móvil de alto rendimiento para el control, préstamo y trazabilidad de materiales de laboratorios universitarios mediante credenciales y activos con código QR
+        </p>
+      </div>
+
+      <!-- Cuadrícula de Metadatos -->
+      <div class="cover-meta-grid">
+        
+        <!-- Tarjeta de Datos Académicos -->
+        <div class="cover-card">
+          <div class="cover-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Detalles de la Asignatura
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Asignatura:</span>
+            <span class="meta-val">Desarrollo Móvil Integral</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Carrera:</span>
+            <span class="meta-val">IDGS (10° Cuatrimestre)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Docente:</span>
+            <span class="meta-val">Ericka Nohemí Álvarez Valencia</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Fecha de Entrega:</span>
+            <span class="meta-val" style="color: #FCD34D;">16 de Octubre de 2026</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Modalidad:</span>
+            <span class="meta-val">Equipo de Desarrollo Ágil</span>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Integrantes del Equipo -->
+        <div class="cover-card">
+          <div class="cover-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Integrantes del Equipo (IDGS)
+          </div>
+          <ul class="team-list">
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Alvaro Jesús Chávez Bazana</span>
+              <span class="team-role-tag">Product Owner</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Guillermo Yael Berlín Fomperosa</span>
+              <span class="team-role-tag">Scrum Master</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Juan Pablo Vega Uribe</span>
+              <span class="team-role-tag">Lead Mobile Dev</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Diego Sebastián Vilegas Enriquez</span>
+              <span class="team-role-tag">Backend & Data</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Pie de Portada -->
+      <div class="cover-footer">
+        <span>Universidad Tecnológica de Salamanca — Salamanca, Gto.</span>
+        <span>Entregable Oficial: Documento PDF - Fase 1</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       CUERPO DEL INFORME (ESTRUCTURA SOLICITADA EN EL PDF)
+       ============================================================== -->
+  <div class="report-body">
+
+    <!-- SECCIÓN 2: INTRODUCCIÓN -->
+    <div class="section-header">
+      <div class="section-badge-num">2</div>
+      <h2>Introducción</h2>
+    </div>
+
+    <p class="lead-paragraph">
+      El desarrollo de aplicaciones móviles contemporáneas exige un riguroso balance entre velocidad de entrega, calidad del software, satisfacción de necesidades humanas reales y estabilidad técnica. Iniciar la codificación de un proyecto móvil sin una fase previa de análisis y planificación constituye uno de los errores más costosos en la industria del software.
+    </p>
+
+    <div class="info-card">
+      <h4>¿Por qué es indispensable planificar un proyecto antes de programar?</h4>
+      <p>
+        Planificar antes de escribir código permite dimensionar con exactitud el <strong>alcance</strong>, identificar las restricciones operativas de la plataforma (capacidades de batería, consumo de datos móviles, latencia de red en campus escolar, permisos de hardware) y definir una <strong>arquitectura de software limpia</strong> que prevenga la acumulación de deuda técnica. Cuando un equipo se precipita a programar sin especificaciones claras, suelen suscitarse retrabajos continuos, desacuerdos entre integrantes, pantallas mal estructuradas e incompatibilidades severas en la gestión de datos. La planificación provee el mapa estratégico que asegura que cada línea de código contribuya directamente a resolver el problema raíz.
+      </p>
+    </div>
+
+    <div class="info-card teal">
+      <h4>¿Cómo ayudan las metodologías ágiles a los equipos de desarrollo móvil?</h4>
+      <p>
+        El ecosistema móvil se caracteriza por su dinamismo y por la alta exigencia de usabilidad por parte de los usuarios. Las <strong>metodologías ágiles (como Scrum y Kanban)</strong> transforman radicalmente la dinámica de trabajo de los equipos mediante tres pilares fundamentales:
+      </p>
+      <ul class="custom-bullet-list">
+        <li><strong>Entregas iterativas e incrementales (Sprints):</strong> En lugar de esperar meses para ver una aplicación terminada, el equipo genera versiones funcionales (APKs o builds de prueba) cada una o dos semanas, permitiendo evaluar prototipos en dispositivos físicos reales desde etapas tempranas.</li>
+        <li><strong>Adaptabilidad y mitigación de riesgos:</strong> Facilita ajustar requerimientos ante limitaciones imprevistas (por ejemplo, tiempos de respuesta de la cámara para lectura de QR o reglas de seguridad en la nube) sin descarrilar el proyecto entero.</li>
+        <li><strong>Transparencia, colaboración y enfoque en valor:</strong> La sincronización constante (reuniones diarias y tableros compartidos) elimina los cuellos de botella y asegura que el equipo priorice siempre las funcionalidades de mayor impacto para el usuario final.</li>
+      </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 3: DESCRIPCIÓN DEL PROYECTO MÓVIL -->
+    <div class="section-header">
+      <div class="section-badge-num">3</div>
+      <h2>Descripción del Proyecto Móvil</h2>
+    </div>
+
+    <div class="info-card orange">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0; color: #9A3412;">Nombre Tentativo de la Aplicación</h3>
+        <span style="background: #F97316; color: white; padding: 4px 12px; border-radius: 9999px; font-weight: 800; font-size: 0.82rem; letter-spacing: 1px;">LABPASS QR</span>
+      </div>
+      <p style="margin-bottom: 0;">
+        <strong>LabPass QR</strong> es un ecosistema móvil integral concebido para digitalizar y automatizar por completo el flujo de control, solicitud, préstamo, resguardo y devolución de materiales, componentes electrónicos, instrumentación de medición y equipos de cómputo en los laboratorios de la Universidad Tecnológica de Salamanca (UTS).
+      </p>
+    </div>
+
+    <h3>Breve Descripción de su Propósito</h3>
+    <p>
+      En los laboratorios de especialidad de la UTS (electrónica, mecatrónica, redes, cómputo y química), el proceso convencional de préstamo de equipo se efectúa mediante libretas de firmas y formatos de papel. Este mecanismo analógico provoca filas excesivas de alumnos en los horarios pico de cambio de clase (esperas de 10 a 20 minutos), riesgo continuo de extravío de activos costosos por datos ilegibles, falta de trazabilidad en tiempo real sobre la custodia de cada recurso y nula visibilidad para los alumnos sobre el inventario disponible.
+    </p>
+    <p>
+      <strong>LabPass QR</strong> resuelve esta problemática transformando el smartphone del alumno y del laboratorista en una terminal inteligente de escaneo rápido. La aplicación asocia cada activo físico del laboratorio con un código QR serializado y vincula cada estudiante mediante su credencial digital QR universitaria, permitiendo completar transacciones seguras de préstamo y devolución en un tiempo récord de <strong>3 a 5 segundos</strong>, con notificaciones en vivo y respaldo en la nube.
+    </p>
+
+    <h3>Público Objetivo (Segmentación de Usuarios)</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 18px 0;">
+      
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--primary); border-radius: 10px; padding: 16px;">
+        <h4 style="color: var(--primary); margin-top: 0; font-size: 0.96rem;">👨‍🎓 Alumnos UTS</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Estudiantes de ingenierías y TSU que requieren insumos y kits para prácticas. Necesitan consultar stock en vivo desde el salón y tramitar préstamos sin perder tiempo de clase.
+        </p>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--secondary); border-radius: 10px; padding: 16px;">
+        <h4 style="color: var(--secondary-dark); margin-top: 0; font-size: 0.96rem;">👨‍🔬 Laboratoristas</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Personal técnico responsable del inventario y ventanilla. Requieren escaneo ágil en lote, control preciso de deudores, alertas de material retenido y registro de incidencias físicas.
+        </p>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--accent); border-radius: 10px; padding: 16px;">
+        <h4 style="color: #C2410C; margin-top: 0; font-size: 0.96rem;">🏫 Jefaturas de Carrera</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Coordinadores y directores académicos. Requieren reportes de auditoría, índices de rotación de equipo, historial de mermas y comprobantes digitales de no-adeudo.
+        </p>
+      </div>
+
+    </div>
+
+    <h3>Funcionalidades Principales de la Aplicación</h3>
+    <p>
+      El sistema integra las características esenciales del núcleo operativo más la funcionalidad innovadora propuesta por el equipo de desarrollo:
+    </p>
+
+    <div class="features-grid">
+      
+      <!-- Función 1 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 1</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10"></rect></svg>
+          Escaneo y Vinculación Rápida QR
+        </div>
+        <p class="feature-desc">
+          Lectura nativa ultra rápida con la cámara del dispositivo móvil que asocia en una sola transacción la credencial digital QR del alumno con las etiquetas QR de los activos de laboratorio solicitados, registrando matrícula, ID de activo, fecha, hora y responsable en menos de 5 segundos.
+        </p>
+      </div>
+
+      <!-- Función 2 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 2</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          Catálogo Dinámico de Inventario
+        </div>
+        <p class="feature-desc">
+          Consulta en tiempo real del inventario clasificado por laboratorio (redes, cómputo, mecatrónica), indicando el estado en vivo de cada componente: <em>Disponible</em>, <em>En Préstamo</em> (con hora estimada de retorno) o <em>En Mantenimiento</em>, accesible remotamente por los estudiantes desde el aula.
+        </p>
+      </div>
+
+      <!-- Función 3 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 3</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          Módulo de Devolución e Incidencias
+        </div>
+        <p class="feature-desc">
+          Recepción ágil de equipo mediante escaneo inverso que libera el recurso en la base de datos de manera inmediata. Incluye un módulo de inspección que permite adjuntar evidencias fotográficas y notas rápidas si el material devuelto presenta averías físicas o piezas faltantes.
+        </p>
+      </div>
+
+      <!-- Función 4 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 4</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Alertas y Notificaciones Push (FCM)
+        </div>
+        <p class="feature-desc">
+          Envío automático de notificaciones al smartphone del alumno recordándole la entrega del equipo 15 minutos antes de que culmine su horario de práctica, además de alertas al laboratorista sobre materiales con tiempo excedido o alumnos con adeudos activos.
+        </p>
+      </div>
+
+      <!-- Función 5 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 5</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><line x1="2" y1="20" x2="2.01" y2="20"></line></svg>
+          Soporte Offline-First con Caché Local
+        </div>
+        <p class="feature-desc">
+          Mecanismo de persistencia local (SQLite / Hive) que garantiza que la aplicación continúe operando y registrando préstamos en los talleres universitarios aun cuando existan cortes de señal Wi-Fi escolar, sincronizando los datos automáticamente al reconectarse a Internet.
+        </p>
+      </div>
+
+      <!-- Función 6: Característica Adicional Propuesta -->
+      <div class="feature-box" style="border: 2px solid #F59E0B; background: #FFFDF5;">
+        <span class="feature-tag tag-special">★ Característica Adicional Propuesta por el Equipo</span>
+        <div class="feature-title" style="color: #B45309;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Comprobante Digital Criptográfico de No-Adeudo
+        </div>
+        <p class="feature-desc">
+          Generación instantánea de una constancia digital en PDF con código QR y firma criptográfica verificable una vez que el alumno devuelve el material en regla. Permite al estudiante respaldar la entrega de insumos costosos ante docentes y agiliza el trámite de finiquito de cuatrimestre sin necesidad de cartas físicas de biblioteca o almacén.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 4: METODOLOGÍA ÁGIL SELECCIONADA -->
+    <div class="section-header">
+      <div class="section-badge-num">4</div>
+      <h2>Metodología Ágil Seleccionada</h2>
+    </div>
+
+    <div class="info-card teal">
+      <h3 style="margin-top: 0; color: var(--secondary-dark);">Metodología Elegida: SCRUM (con Gestión Visual Scrumban)</h3>
+      <p style="margin-bottom: 0;">
+        Para el ciclo de desarrollo de <strong>LabPass QR</strong>, el equipo seleccionó el marco de trabajo <strong>Scrum</strong>, potenciado con un flujo visual continuo inspirado en <strong>Kanban (Scrumban)</strong> para el monitoreo granular de tareas en el tablero diario.
+      </p>
+    </div>
+
+    <h3>Justificación de la Selección para el Proyecto</h3>
+    <p>
+      La elección de Scrum para este proyecto se fundamenta en las características específicas del desarrollo de software móvil en un entorno académico-tecnológico:
+    </p>
+    <ul class="custom-bullet-list">
+      <li><strong>Ciclos de retroalimentación alineados al calendario escolar:</strong> Al estructurar el trabajo en Sprints de 2 semanas, el equipo puede presentar incrementos funcionales (APKs ejecutables) a la docente en cada fecha de revisión parcial, validando oportunamente la arquitectura y la experiencia de usuario.</li>
+      <li><strong>Descomposición modular de una app móvil:</strong> Permite separar claramente la construcción de la interfaz gráfica (UI/UX en Flutter), la lógica de escaneo con cámara y la infraestructura de datos en la nube (Firebase/BaaS), asignando historias de usuario concretas a cada miembro sin generar colisiones de código.</li>
+      <li><strong>Mitigación temprana de riesgos técnicos en móviles:</strong> La integración de hardware (cámara, sensores y permisos de sistema operativo) suele presentar retos imprevistos en diferentes marcas de teléfonos; Scrum permite abordar estas pruebas de concepto en los primeros Sprints para evitar sorpresas al final del cuatrimestre.</li>
+    </ul>
+
+    <h3>Funcionamiento de la Metodología y Organización del Equipo</h3>
+    <p>
+      El equipo se organiza bajo las ceremonias, artefactos y herramientas oficiales del marco ágil:
+    </p>
+
+    <!-- Ceremonias Scrum en Tarjetas -->
+    <div class="scrum-events-grid">
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Planning</div>
+        <div class="scrum-event-time">Cada 2 semanas (1 hr)</div>
+        <p class="scrum-event-desc">Selección de historias prioritarias del Product Backlog y definición del Sprint Goal.</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Daily Standup</div>
+        <div class="scrum-event-time">10-15 min diarios</div>
+        <p class="scrum-event-desc">Sincronización: ¿Qué hice ayer? ¿Qué haré hoy? ¿Qué bloqueos técnicos tengo?</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Review</div>
+        <div class="scrum-event-time">Fin de cada Sprint</div>
+        <p class="scrum-event-desc">Demostración en vivo de la app funcional a la docente y usuarios de prueba.</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Retrospective</div>
+        <div class="scrum-event-time">Fin de cada Sprint</div>
+        <p class="scrum-event-desc">Análisis de aciertos, fallos y acuerdos de mejora continua para el siguiente ciclo.</p>
+      </div>
+    </div>
+
+    <h4>Herramientas de Colaboración y Gestión del Flujo</h4>
+    <ul class="custom-bullet-list">
+      <li><strong>Tablero Ágil Digital (Trello / GitHub Projects):</strong> Estructurado en 5 columnas con límites de trabajo en progreso (WIP): <em>1. Product Backlog</em> → <em>2. Sprint Backlog (To Do)</em> → <em>3. In Progress</em> → <em>4. Code Review & QA Testing</em> → <em>5. Done (Desplegado en APK)</em>.</li>
+      <li><strong>Control de Versiones y Flujo Git (GitHub):</strong> Implementación de estrategia <strong>GitFlow</strong>, protegiendo la rama <code>main</code> para versiones estables y utilizando ramas secundarias <code>develop</code> y <code>feature/nombre-modulo</code> con Pull Requests revisados antes de integrar cambios.</li>
+      <li><strong>Comunicación Continua:</strong> Canal dedicado en <em>Discord</em> y grupo de trabajo en <em>WhatsApp</em> para resolución inmediata de dudas de integración y alertas de compilación.</li>
+    </ul>
+
+    <!-- Planificación de Sprints -->
+    <h4>Plan de Trabajo por Sprints (Cronograma del Proyecto)</h4>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Sprint</th>
+          <th>Objetivo Principal (Sprint Goal)</th>
+          <th>Entregable Funcional (Incremento)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sprint 1</strong><br><small>Semanas 1-2</small></td>
+          <td>Configuración del entorno Flutter, arquitectura Clean Architecture, integración de Firebase Auth con control de roles (Alumno / Laboratorista) y diseño de maquetas UI base.</td>
+          <td>APK v0.1 con navegación entre pantallas principales y autenticación institucional operativa.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 2</strong><br><small>Semanas 3-4</small></td>
+          <td>Módulo de escaneo QR de alta velocidad con cámara (Mobile Scanner), generación de códigos QR de credenciales y catálogo de inventario en vivo conectado a Firestore.</td>
+          <td>APK v0.2 capaz de leer códigos de material y listar stock clasificado por laboratorio en tiempo real.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 3</strong><br><small>Semanas 5-6</small></td>
+          <td>Lógica transaccional de préstamo, módulo de devolución con registro fotográfico de incidencias y persistencia local (Caché Offline con Hive/SQLite).</td>
+          <td>APK v0.3 con ciclo completo de préstamo/devolución y capacidad de operar sin conexión a Internet.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 4</strong><br><small>Semanas 7-8</small></td>
+          <td>Notificaciones push (FCM), generación de comprobante digital criptográfico de no-adeudo, pruebas de usabilidad y empaquetado para release final.</td>
+          <td>Release Final (APK v1.0), manual de usuario y documentación técnica completa para entrega de la materia.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 5: ROLES DENTRO DEL EQUIPO -->
+    <div class="section-header">
+      <div class="section-badge-num">5</div>
+      <h2>Roles dentro del Equipo</h2>
+    </div>
+
+    <p class="lead-paragraph">
+      De acuerdo con las directrices de la metodología ágil Scrum, los cuatro integrantes del equipo asumieron responsabilidades bien delimitadas para garantizar la máxima eficiencia, especialización y rendición de cuentas:
+    </p>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th style="width: 28%;">Integrante</th>
+          <th style="width: 22%;">Rol Asignado</th>
+          <th style="width: 50%;">Responsabilidades Principales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Alvaro Jesús Chávez Bazana</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-po">Product Owner (PO)</span><br>
+            <small style="font-weight: 600; color: #92400E;">Gestor de Requisitos y Valor</small>
+          </td>
+          <td>
+            • Definir y comunicar la visión estratégica del producto <strong>LabPass QR</strong>.<br>
+            • Crear, redactar y priorizar las historias de usuario en el Product Backlog según el valor para los laboratoristas y alumnos.<br>
+            • Definir los criterios de aceptación (DoD - Definition of Done).<br>
+            • Validar las entregas parciales junto a la docente y recopilar retroalimentación de los usuarios reales de la UTS.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Guillermo Yael Berlín Fomperosa</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-sm">Scrum Master</span><br>
+            <small style="font-weight: 600; color: #3730A3;">Facilitador Ágil & QA</small>
+          </td>
+          <td>
+            • Velar por la correcta aplicación de los principios y ceremonias de Scrum.<br>
+            • Facilitar las sesiones de Sprint Planning, Daily Standup, Review y Retrospective.<br>
+            • Identificar y eliminar impedimentos técnicos u organizacionales que frenen al equipo.<br>
+            • Mantener actualizado el tablero en Trello/GitHub y coordinar el plan de pruebas de integración y usabilidad (QA).
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Juan Pablo Vega Uribe</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-dev">Lead Mobile Developer</span><br>
+            <small style="font-weight: 600; color: #115E59;">Frontend & UI/UX</small>
+          </td>
+          <td>
+            • Diseñar las interfaces de usuario interactivas y adaptativas en <strong>Flutter / Dart</strong> basadas en Material Design 3.<br>
+            • Implementar la lógica de presentación, transiciones fluidas y navegación reactiva entre vistas.<br>
+            • Integrar el controlador de hardware de cámara para escaneo de códigos QR mediante <em>Mobile Scanner API</em>.<br>
+            • Diseñar componentes reutilizables y garantizar una experiencia accesible e intuitiva en dispositivos Android e iOS.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Diego Sebastián Vilegas Enriquez</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-backend">Backend & Data Architect</span><br>
+            <small style="font-weight: 600; color: #9D174D;">Cloud BaaS & Offline Cache</small>
+          </td>
+          <td>
+            • Configurar y gestionar la base de datos documental en tiempo real con <strong>Firebase Cloud Firestore</strong>.<br>
+            • Implementar el sistema de autenticación institucional y reglas de seguridad por roles (RBAC).<br>
+            • Desarrollar el mecanismo de caché y almacenamiento local <strong>Offline-First</strong> con <strong>SQLite / Hive</strong>.<br>
+            • Integrar el servicio de Notificaciones Push (Firebase Cloud Messaging - FCM) y almacenamiento en la nube (Cloud Storage) para evidencias fotográficas.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 6: JUSTIFICACIÓN DE LA ARQUITECTURA PROPUESTA -->
+    <div class="section-header">
+      <div class="section-badge-num">6</div>
+      <h2>Justificación de la Arquitectura Propuesta</h2>
+    </div>
+
+    <p class="lead-paragraph">
+      Para cumplir cabalmente con las especificaciones de la Fase 1, se definió una arquitectura robusta, modular y escalable fundamentada en los principios de <strong>Clean Architecture (Arquitectura Limpia)</strong> en combinación con el patrón de diseño <strong>MVVM (Model-View-ViewModel / BLoC)</strong> para el frontend móvil, complementado con un esquema <strong>Serverless / Backend-as-a-Service (BaaS)</strong> en la nube.
+    </p>
+
+    <div class="info-card purple">
+      <h3 style="margin-top: 0; color: #6B21A8;">¿Por qué es la arquitectura más adecuada para LabPass QR?</h3>
+      <p>
+        En el desarrollo móvil, acoplar la interfaz gráfica directamente con las peticiones a la base de datos o con las APIs del hardware (cámara, almacenamiento) es una de las causas principales de fallos y lentitud. La Clean Architecture organiza la aplicación en tres capas concéntricas e independientes:
+      </p>
+      <ul class="custom-bullet-list">
+        <li><strong>1. Capa de Presentación (UI Layer):</strong> Contiene las pantallas, widgets y controladores reactivos de estado (ViewModels / Notifiers). Su única responsabilidad es renderizar la información y capturar eventos del usuario, manteniéndose completamente ajena a la forma en que se guardan los datos.</li>
+        <li><strong>2. Capa de Dominio (Domain Layer):</strong> Es el corazón del sistema; contiene las entidades de negocio (<em>Préstamo, Activo, Estudiante, Incidencia</em>) y los <strong>Casos de Uso (Use Cases)</strong> puros (ej. <em>RegistrarPrestamoUseCase, ValidarQRAlumnoUseCase, ConsultarStockDisponibleUseCase</em>). Esta capa no depende de ningún framework ni librería externa, lo que permite realizar pruebas unitarias automatizadas con extrema facilidad.</li>
+        <li><strong>3. Capa de Datos (Data Layer):</strong> Implementa el <strong>Patrón Repositorio (Repository Pattern)</strong>, el cual actúa como árbitro inteligente decidiendo si lee o escribe información en la base de datos local (SQLite/Hive) o en el backend remoto (Firebase Firestore). Si el dispositivo carece de conexión a Internet, el repositorio guarda la transacción localmente y encola la sincronización para el momento en que se restablezca el Wi-Fi escolar.</li>
+      </ul>
+    </div>
+
+    <div class="tech-stack-row">
+      <div class="tech-chip tech-flutter"><span></span> <strong>Framework Móvil:</strong> Flutter 3.x (Dart)</div>
+      <div class="tech-chip tech-firebase"><span></span> <strong>BaaS en Nube:</strong> Firebase Cloud Firestore + Auth</div>
+      <div class="tech-chip tech-scanner"><span></span> <strong>Visión Artificial:</strong> Mobile Scanner (Google ML Kit)</div>
+      <div class="tech-chip tech-hive"><span></span> <strong>Caché Local Offline:</strong> Hive / SQLite Database</div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 7: DIAGRAMA DE LA ARQUITECTURA Y FLUJO DE PANTALLAS -->
+    <div class="section-header">
+      <div class="section-badge-num">7</div>
+      <h2>Diagrama de la Arquitectura y Flujo de Pantallas</h2>
+    </div>
+
+    <p class="lead-paragraph">
+      A continuación se presentan los diagramas visuales detallados requeridos en el entregable de la Fase 1: en primer término, el <strong>mapa de flujo y navegación entre las pantallas de la app</strong> (representando cómo se pasa de una vista a otra mediante eventos de usuario y permisos de rol); y en segundo término, el <strong>diagrama de arquitectura de software en capas</strong>.
+    </p>
+
+    <!-- DIAGRAMA VISUAL 1: FLUJO DE PANTALLAS -->
+    <h3>7.1 Diagrama de Navegación y Estructura de Pantallas (Screen Flow)</h3>
+    <div class="diagram-container">
+      
+      <!-- SVG Vectorial del Flujo de Pantallas -->
+      <svg class="diagram-svg" viewBox="0 0 860 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradHeader" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0F4C81"/>
+            <stop offset="100%" stop-color="#153E6B"/>
+          </linearGradient>
+          <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F58220"/>
+            <stop offset="100%" stop-color="#D97706"/>
+          </linearGradient>
+          <linearGradient id="gradTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00AE9D"/>
+            <stop offset="100%" stop-color="#0F766E"/>
+          </linearGradient>
+          <filter id="shadowBox" x="-5%" y="-5%" width="110%" height="115%">
+            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.1"/>
+          </filter>
+        </defs>
+
+        <!-- Fondo del canvas -->
+        <rect width="860" height="620" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+
+        <!-- NODO 1: SPLASH SCREEN -->
+        <g filter="url(#shadowBox)">
+          <rect x="350" y="25" width="160" height="48" rx="8" fill="url(#gradHeader)"/>
+          <text x="430" y="47" fill="white" font-family="'Outfit', sans-serif" font-weight="700" font-size="13" text-anchor="middle">1. Splash Screen</text>
+          <text x="430" y="62" fill="#93C5FD" font-family="sans-serif" font-size="9.5" text-anchor="middle">Carga de Assets & Sesión</text>
+        </g>
+
+        <!-- Flecha Splash -> Login -->
+        <path d="M430 73 L430 95" stroke="#0F4C81" stroke-width="2" marker-end="url(#arrow)"/>
+        <polygon points="427,95 433,95 430,102" fill="#0F4C81"/>
+
+        <!-- NODO 2: LOGIN SCREEN -->
+        <g filter="url(#shadowBox)">
+          <rect x="330" y="105" width="200" height="52" rx="8" fill="white" stroke="#0F4C81" stroke-width="2"/>
+          <text x="430" y="127" fill="#0F4C81" font-family="'Outfit', sans-serif" font-weight="700" font-size="13" text-anchor="middle">2. Login / Auth UTS</text>
+          <text x="430" y="145" fill="#64748B" font-family="sans-serif" font-size="10" text-anchor="middle">Credenciales Institucionales</text>
+        </g>
+
+        <!-- Bifurcación por Roles -->
+        <path d="M330 131 L200 131 L200 185" stroke="#00AE9D" stroke-width="2" stroke-dasharray="4"/>
+        <polygon points="197,185 203,185 200,192" fill="#00AE9D"/>
+        <text x="250" y="123" fill="#0F766E" font-family="sans-serif" font-weight="700" font-size="10" text-anchor="middle">Rol: Alumno</text>
+
+        <path d="M530 131 L660 131 L660 185" stroke="#F58220" stroke-width="2" stroke-dasharray="4"/>
+        <polygon points="657,185 663,185 660,192" fill="#F58220"/>
+        <text x="610" y="123" fill="#B45309" font-family="sans-serif" font-weight="700" font-size="10" text-anchor="middle">Rol: Laboratorista</text>
+
+        <!-- =================== RAMA ALUMNO (IZQUIERDA) =================== -->
+        <rect x="35" y="180" width="330" height="415" rx="10" fill="#F0FDFA" stroke="#99F6E4" stroke-width="1.5"/>
+        <text x="200" y="202" fill="#0F766E" font-family="'Outfit', sans-serif" font-weight="800" font-size="13" text-anchor="middle">MODO ESTUDIANTE (VISTAS)</text>
+
+        <!-- NODO 3A: DASHBOARD ALUMNO -->
+        <g filter="url(#shadowBox)">
+          <rect x="90" y="215" width="220" height="46" rx="6" fill="url(#gradTeal)"/>
+          <text x="200" y="236" fill="white" font-family="'Outfit', sans-serif" font-weight="700" font-size="12" text-anchor="middle">3A. Dashboard del Estudiante</text>
+          <text x="200" y="251" fill="#CCFBF1" font-family="sans-serif" font-size="9" text-anchor="middle">Resumen, Préstamos y Acceso Directo</text>
+        </g>
+
+        <!-- Subpantallas Alumno -->
+        <!-- 4A: Mi Credencial QR -->
+        <g filter="url(#shadowBox)">
+          <rect x="55" y="285" width="135" height="44" rx="6" fill="white" stroke="#00AE9D" stroke-width="1.2"/>
+          <text x="122" y="303" fill="#0F766E" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">4A. Credencial QR</text>
+          <text x="122" y="318" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Código Dinámico Alumno</text>
+        </g>
+
+        <!-- 4B: Catálogo de Laboratorios -->
+        <g filter="url(#shadowBox)">
+          <rect x="210" y="285" width="135" height="44" rx="6" fill="white" stroke="#00AE9D" stroke-width="1.2"/>
+          <text x="277" y="303" fill="#0F766E" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">4B. Catálogo Stock</text>
+          <text x="277" y="318" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Disponibilidad en Vivo</text>
+        </g>
+
+        <!-- Conexiones Dashboard Alumno a 4A y 4B -->
+        <path d="M150 261 L150 273 L122 273 L122 285" stroke="#00AE9D" stroke-width="1.5"/>
+        <path d="M250 261 L250 273 L277 273 L277 285" stroke="#00AE9D" stroke-width="1.5"/>
+
+        <!-- 5A: Detalle de Activo / Componente -->
+        <g filter="url(#shadowBox)">
+          <rect x="210" y="355" width="135" height="44" rx="6" fill="white" stroke="#00AE9D" stroke-width="1.2"/>
+          <text x="277" y="373" fill="#0F766E" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">5A. Detalle Insumo</text>
+          <text x="277" y="388" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Ficha Técnica & Estado</text>
+        </g>
+        <path d="M277 329 L277 355" stroke="#00AE9D" stroke-width="1.5"/>
+
+        <!-- 6A: Historial de Préstamos Activos & Notificaciones -->
+        <g filter="url(#shadowBox)">
+          <rect x="90" y="430" width="220" height="46" rx="6" fill="white" stroke="#00AE9D" stroke-width="1.5"/>
+          <text x="200" y="450" fill="#0F766E" font-family="'Outfit', sans-serif" font-weight="700" font-size="12" text-anchor="middle">6A. Mis Préstamos Activos</text>
+          <text x="200" y="465" fill="#64748B" font-family="sans-serif" font-size="9" text-anchor="middle">Temporizador de Entrega & Alertas</text>
+        </g>
+        <path d="M122 329 L122 410 L200 410 L200 430" stroke="#00AE9D" stroke-width="1.5"/>
+        <path d="M277 399 L277 410 L200 410" stroke="#00AE9D" stroke-width="1.5"/>
+
+        <!-- 7A: Comprobante Digital Criptográfico (Adicional) -->
+        <g filter="url(#shadowBox)">
+          <rect x="75" y="505" width="250" height="52" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+          <text x="200" y="526" fill="#B45309" font-family="'Outfit', sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">★ 7A. Comprobante Digital de No-Adeudo</text>
+          <text x="200" y="543" fill="#78350F" font-family="sans-serif" font-size="9" text-anchor="middle">Constancia PDF con QR Criptográfico y Finiquito</text>
+        </g>
+        <path d="M200 476 L200 505" stroke="#F59E0B" stroke-width="2"/>
+
+        <!-- =================== RAMA LABORATORISTA (DERECHA) =================== -->
+        <rect x="495" y="180" width="330" height="415" rx="10" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1.5"/>
+        <text x="660" y="202" fill="#B45309" font-family="'Outfit', sans-serif" font-weight="800" font-size="13" text-anchor="middle">MODO LABORATORISTA (GESTIÓN)</text>
+
+        <!-- NODO 3B: DASHBOARD LABORATORISTA -->
+        <g filter="url(#shadowBox)">
+          <rect x="550" y="215" width="220" height="46" rx="6" fill="url(#gradOrange)"/>
+          <text x="660" y="236" fill="white" font-family="'Outfit', sans-serif" font-weight="700" font-size="12" text-anchor="middle">3B. Panel de Control Almacén</text>
+          <text x="660" y="251" fill="#FEF3C7" font-family="sans-serif" font-size="9" text-anchor="middle">Estatus de Mesas, Préstamos y Alertas</text>
+        </g>
+
+        <!-- 4C: Escáner QR de Alta Velocidad -->
+        <g filter="url(#shadowBox)">
+          <rect x="515" y="285" width="135" height="44" rx="6" fill="white" stroke="#F58220" stroke-width="1.5"/>
+          <text x="582" y="303" fill="#C2410C" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">4C. Lector QR Cámara</text>
+          <text x="582" y="318" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Escaneo Dual Alumno+Activo</text>
+        </g>
+
+        <!-- 4D: Monitor de Préstamos Activos -->
+        <g filter="url(#shadowBox)">
+          <rect x="670" y="285" width="135" height="44" rx="6" fill="white" stroke="#F58220" stroke-width="1.2"/>
+          <text x="737" y="303" fill="#C2410C" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">4D. Préstamos Vivos</text>
+          <text x="737" y="318" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Alertas de Vencimiento</text>
+        </g>
+
+        <path d="M610 261 L610 273 L582 273 L582 285" stroke="#F58220" stroke-width="1.5"/>
+        <path d="M710 261 L710 273 L737 273 L737 285" stroke="#F58220" stroke-width="1.5"/>
+
+        <!-- 5B: Confirmación Instantánea de Préstamo -->
+        <g filter="url(#shadowBox)">
+          <rect x="515" y="355" width="135" height="44" rx="6" fill="white" stroke="#F58220" stroke-width="1.2"/>
+          <text x="582" y="373" fill="#C2410C" font-family="'Outfit', sans-serif" font-weight="700" font-size="11" text-anchor="middle">5B. Confirmar Salida</text>
+          <text x="582" y="388" fill="#64748B" font-family="sans-serif" font-size="8.5" text-anchor="middle">Asignación en 3 Segundos</text>
+        </g>
+        <path d="M582 329 L582 355" stroke="#F58220" stroke-width="1.5"/>
+
+        <!-- 6B: Devolución & Registro de Incidencias -->
+        <g filter="url(#shadowBox)">
+          <rect x="550" y="430" width="220" height="48" rx="6" fill="white" stroke="#F58220" stroke-width="1.5"/>
+          <text x="660" y="449" fill="#C2410C" font-family="'Outfit', sans-serif" font-weight="700" font-size="11.5" text-anchor="middle">6B. Recepción & Evidencia Cámara</text>
+          <text x="660" y="466" fill="#64748B" font-family="sans-serif" font-size="9" text-anchor="middle">Liberación de Stock y Foto de Daños</text>
+        </g>
+        <path d="M582 399 L582 415 L660 415 L660 430" stroke="#F58220" stroke-width="1.5"/>
+        <path d="M737 329 L737 415 L660 415" stroke="#F58220" stroke-width="1.5"/>
+
+        <!-- 7B: Administración de Inventario -->
+        <g filter="url(#shadowBox)">
+          <rect x="550" y="505" width="220" height="48" rx="6" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/>
+          <text x="660" y="525" fill="#1E40AF" font-family="'Outfit', sans-serif" font-weight="700" font-size="11.5" text-anchor="middle">7B. Administración de Inventario</text>
+          <text x="660" y="542" fill="#475569" font-family="sans-serif" font-size="9" text-anchor="middle">Alta de Nuevos Activos e Impresión QR</text>
+        </g>
+        <path d="M660 478 L660 505" stroke="#3B82F6" stroke-width="1.5"/>
+
+        <!-- Conexión transversal: Devolución 6B dispara Comprobante 7A -->
+        <path d="M550 454 L390 454 L390 531 L325 531" stroke="#10B981" stroke-width="2" stroke-dasharray="3"/>
+        <polygon points="325,528 325,534 318,531" fill="#10B981"/>
+        <text x="430" y="447" fill="#059669" font-family="sans-serif" font-weight="700" font-size="9" text-anchor="middle">Sincronización en Tiempo Real</text>
+
+      </svg>
+
+      <div class="diagram-caption">
+        <strong>Figura 1:</strong> Mapa de Navegación y Flujo de Pantallas de <em>LabPass QR</em>. Se observa la autenticación centralizada y la derivación de vistas independientes según el rol institucional (Estudiante vs. Laboratorista), culminando en la sincronización mutua de la devolución.
+      </div>
+    </div>
+
+    <!-- CÓMO SE PASA DE UNA PANTALLA A OTRA -->
+    <h4>Descripción de Transiciones y Navegación entre Pantallas:</h4>
+    <ul class="custom-bullet-list">
+      <li><strong>De Splash Screen (1) a Login (2):</strong> Validación automática de token de sesión en almacenamiento local. Si la sesión expiró o no existe, redirige de inmediato a la pantalla de Login con credenciales de la UTS.</li>
+      <li><strong>De Login (2) a Dashboard (3A / 3B):</strong> Tras autenticarse vía Firebase Auth, el router de la app inspecciona el claim de rol: si es alumno lo envía a <em>3A</em>; si es personal técnico lo envía a <em>3B</em>.</li>
+      <li><strong>De Dashboard Alumno (3A) a Credencial QR (4A) o Catálogo (4B):</strong> Mediante una barra inferior de navegación (<em>BottomNavigationBar</em>) con animaciones nativas suaves.</li>
+      <li><strong>De Catálogo (4B) a Detalle de Insumo (5A):</strong> Al pulsar sobre cualquier tarjeta de equipo, se abre una vista modal detallada con especificaciones técnicas, laboratorio al que pertenece y estado actual.</li>
+      <li><strong>De Dashboard Laboratorista (3B) a Lector QR (4C):</strong> Botón flotante central de acción rápida (<em>FAB</em>). Abre el sensor de cámara a pantalla completa con visor de enfoque asistido.</li>
+      <li><strong>De Lector QR (4C) a Confirmación (5B):</strong> Al escanear el QR del alumno y del activo sucesivamente, la app vibra mediante retroalimentación háptica y muestra la pantalla resumen con botón de confirmación de 1 solo toque.</li>
+      <li><strong>De Recepción (6B) a Comprobante Digital (7A):</strong> Cuando el laboratorista confirma la recepción exitosa del material devuelto, la base de datos Firestore emite un evento en tiempo real que desbloquea automáticamente la constancia digital en la pantalla del alumno.</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <!-- DIAGRAMA VISUAL 2: ARQUITECTURA DEL SISTEMA -->
+    <h3>7.2 Diagrama de Arquitectura de Software en Capas (Clean Architecture + BaaS)</h3>
+    <div class="diagram-container">
+      
+      <!-- SVG Vectorial de la Arquitectura en Capas -->
+      <svg class="diagram-svg" viewBox="0 0 860 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fondo -->
+        <rect width="860" height="480" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5"/>
+
+        <!-- CAPA 1: PRESENTACIÓN (FLUTTER UI) -->
+        <rect x="30" y="25" width="800" height="110" rx="10" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+        <text x="50" y="52" fill="#1E40AF" font-family="'Outfit', sans-serif" font-weight="800" font-size="14">CAPA DE PRESENTACIÓN (FLUTTER UI & WIDGETS)</text>
+        <text x="50" y="70" fill="#64748B" font-family="sans-serif" font-size="10.5">Vistas reactivas, componentes Material Design 3, controladores de estado (BLoC / Notifiers) y navegación GoRouter</text>
+        
+        <!-- Bloques dentro de UI -->
+        <rect x="50" y="82" width="165" height="40" rx="6" fill="white" stroke="#BFDBFE"/>
+        <text x="132" y="106" fill="#1D4ED8" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Vistas Estudiante</text>
+
+        <rect x="235" y="82" width="165" height="40" rx="6" fill="white" stroke="#BFDBFE"/>
+        <text x="317" y="106" fill="#1D4ED8" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Vistas Laboratorista</text>
+
+        <rect x="420" y="82" width="180" height="40" rx="6" fill="white" stroke="#BFDBFE"/>
+        <text x="510" y="106" fill="#1D4ED8" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Mobile Scanner Overlay</text>
+
+        <rect x="620" y="82" width="190" height="40" rx="6" fill="white" stroke="#BFDBFE"/>
+        <text x="715" y="106" fill="#1D4ED8" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">State Management (BLoC)</text>
+
+        <!-- Flecha hacia Dominio -->
+        <path d="M430 135 L430 165" stroke="#2563EB" stroke-width="2.5"/>
+        <polygon points="426,165 434,165 430,173" fill="#2563EB"/>
+
+        <!-- CAPA 2: DOMINIO (CORE DE NEGOCIO PURO) -->
+        <rect x="30" y="175" width="800" height="110" rx="10" fill="#F0FDF4" stroke="#10B981" stroke-width="2"/>
+        <text x="50" y="202" fill="#065F46" font-family="'Outfit', sans-serif" font-weight="800" font-size="14">CAPA DE DOMINIO (CASOS DE USO Y ENTIDADES DE NEGOCIO)</text>
+        <text x="50" y="220" fill="#64748B" font-family="sans-serif" font-size="10.5">Lógica empresarial pura independiente de librerías externas o bases de datos (Altamente Testeable)</text>
+
+        <rect x="50" y="232" width="175" height="40" rx="6" fill="white" stroke="#A7F3D0"/>
+        <text x="137" y="256" fill="#047857" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">RegistrarPrestamoUseCase</text>
+
+        <rect x="245" y="232" width="175" height="40" rx="6" fill="white" stroke="#A7F3D0"/>
+        <text x="332" y="256" fill="#047857" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">DevolverActivoUseCase</text>
+
+        <rect x="440" y="232" width="180" height="40" rx="6" fill="white" stroke="#A7F3D0"/>
+        <text x="530" y="256" fill="#047857" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">ConsultarStockUseCase</text>
+
+        <rect x="640" y="232" width="170" height="40" rx="6" fill="white" stroke="#A7F3D0"/>
+        <text x="725" y="256" fill="#047857" font-family="sans-serif" font-weight="700" font-size="11" text-anchor="middle">Entities (Prestamo, Item)</text>
+
+        <!-- Flecha hacia Datos -->
+        <path d="M430 285 L430 315" stroke="#10B981" stroke-width="2.5"/>
+        <polygon points="426,315 434,315 430,323" fill="#10B981"/>
+
+        <!-- CAPA 3: DATOS Y PERSISTENCIA (OFFLINE + NUBE) -->
+        <rect x="30" y="325" width="800" height="135" rx="10" fill="#FFFBEB" stroke="#F58220" stroke-width="2"/>
+        <text x="50" y="352" fill="#92400E" font-family="'Outfit', sans-serif" font-weight="800" font-size="14">CAPA DE DATOS (REPOSITORIOS Y FUENTES DE INFORMACIÓN)</text>
+        <text x="50" y="370" fill="#64748B" font-family="sans-serif" font-size="10.5">Abstracción mediante Repository Pattern: soporte Offline-First con sincronización en segundo plano</text>
+
+        <!-- Fuentes Locales vs Remotas -->
+        <rect x="50" y="382" width="220" height="60" rx="8" fill="white" stroke="#FDE68A"/>
+        <text x="160" y="405" fill="#B45309" font-family="sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">Local DataSource (Offline)</text>
+        <text x="160" y="424" fill="#64748B" font-family="sans-serif" font-size="9.5" text-anchor="middle">Hive DB / SQLite Local Cache</text>
+
+        <!-- Repositorio Central -->
+        <rect x="295" y="382" width="230" height="60" rx="8" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+        <text x="410" y="405" fill="#0F4C81" font-family="sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">Repository Pattern</text>
+        <text x="410" y="424" fill="#64748B" font-family="sans-serif" font-size="9.5" text-anchor="middle">Decisión: Cache vs Nube en Vivo</text>
+
+        <!-- Fuentes Remotas (BaaS) -->
+        <rect x="550" y="382" width="260" height="60" rx="8" fill="white" stroke="#FDE68A"/>
+        <text x="680" y="405" fill="#B45309" font-family="sans-serif" font-weight="800" font-size="11.5" text-anchor="middle">Remote DataSource (Cloud BaaS)</text>
+        <text x="680" y="424" fill="#64748B" font-family="sans-serif" font-size="9.5" text-anchor="middle">Firebase Firestore • Auth • FCM Push</text>
+
+        <!-- Conexiones internas de datos -->
+        <path d="M270 412 L295 412" stroke="#B45309" stroke-width="1.5"/>
+        <path d="M525 412 L550 412" stroke="#B45309" stroke-width="1.5"/>
+
+      </svg>
+
+      <div class="diagram-caption">
+        <strong>Figura 2:</strong> Arquitectura de Software en Capas de <em>LabPass QR</em>. Demuestra la separación estricta entre la UI en Flutter, la lógica de negocio pura en la Capa de Dominio, y la persistencia híbrida (Offline-First en Hive + Sincronización Remota en Firebase Firestore).
+      </div>
+    </div>
+
+    <!-- CONCLUSIÓN / CIERRE DE FASE 1 -->
+    <div class="info-card teal" style="margin-top: 35px;">
+      <h3 style="margin-top: 0; color: #047857;">Conclusión de la Fase 1: Plan del Proceso de Desarrollo Móvil</h3>
+      <p style="margin-bottom: 0;">
+        Con la culminación de esta primera fase, el equipo de desarrollo de <strong>IDGS</strong> cuenta con una visión clara y delimitada para el proyecto <strong>LabPass QR</strong>. La selección del marco ágil <strong>Scrum</strong>, la distribución de responsabilidades especializadas entre sus cuatro integrantes y la adopción de una <strong>Clean Architecture con capacidades Offline-First</strong> garantizan el cumplimiento de los objetivos de la asignatura <em>Desarrollo Móvil Integral</em>, sentando las bases técnicas para el inicio inmediato del primer Sprint de implementación.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

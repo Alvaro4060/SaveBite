@@ -1,0 +1,17 @@
+# Flutter build artifacts in subfolders
+**/build/
+**/.dart_tool/
+**/.pub-cache/
+**/.pub/
+
+# System and IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+__pycache__/
+*.pyc
+
+# Temp empty folders
+Nueva carpeta/

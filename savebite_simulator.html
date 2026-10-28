@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SaveBite - Simulador Interactivo Frontend Flutter</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap');
+
+    :root {
+      --primary: #0F4C81;
+      --primary-dark: #0A2E50;
+      --primary-light: #2563EB;
+      --secondary: #00AE9D;
+      --secondary-dark: #0E7490;
+      --accent: #F58220;
+      --accent-hover: #EA580C;
+      --success: #10B981;
+      --green-dark: #047857;
+      --warning: #F59E0B;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --surface-muted: #F1F5F9;
+      --border: #E2E8F0;
+      --text: #1E293B;
+      --text-muted: #64748B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #071E36 0%, #0F4C81 50%, #0A698A 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #FFFFFF;
+    }
+
+    .top-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .top-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .top-header p {
+      font-size: 0.95rem;
+      color: #A7F3D0;
+      margin-top: 4px;
+    }
+
+    .phone-container {
+      width: 390px;
+      height: 780px;
+      background: #000;
+      border-radius: 46px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 0 4px #334155;
+      position: relative;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      border-radius: 36px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      color: var(--text);
+    }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 24px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    /* Screen Views */
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    .screen-view.active {
+      display: flex;
+    }
+
+    /* SPLASH SCREEN */
+    #splash-screen {
+      background: linear-gradient(145deg, #071E36 0%, #0F4C81 50%, #00AE9D 100%);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      color: white;
+      z-index: 50;
+    }
+
+    .splash-logo {
+      width: 90px;
+      height: 90px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* APP BAR */
+    .mobile-app-bar {
+      padding: 36px 16px 10px 16px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar-brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+    }
+
+    .bar-brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .bar-brand-sub {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .role-toggle-btn {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* BOTTOM NAV */
+    .mobile-bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 62px;
+      background: white;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: 8px;
+      z-index: 40;
+    }
+
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .nav-btn .icon {
+      font-size: 1.25rem;
+    }
+
+    /* SCROLL CONTENT */
+    .mobile-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 14px 75px 14px;
+    }
+
+    /* PACKAGE CARD */
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(15, 76, 129, 0.04);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .card-emoji {
+      width: 40px;
+      height: 40px;
+      background: #EFF6FF;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .card-title-col {
+      flex: 1;
+    }
+
+    .card-store {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .card-discount-pill {
+      background: linear-gradient(90deg, #F58220, #EA580C);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      height: fit-content;
+    }
+
+    .card-time {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--accent-hover);
+      font-weight: 700;
+      margin: 6px 0;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--surface-muted);
+    }
+
+    .card-price-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .price-old {
+      font-size: 0.7rem;
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .price-new {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--green-dark);
+    }
+
+    /* QR VOUCHER */
+    .qr-box {
+      width: 170px;
+      height: 170px;
+      background: white;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      position: relative;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 18px);
+      grid-gap: 3px;
+    }
+
+    .qr-cell {
+      width: 18px;
+      height: 18px;
+      background: var(--text);
+      border-radius: 2px;
+    }
+
+    .qr-cell.corner {
+      background: var(--primary);
+    }
+
+    .qr-cell.white {
+      background: transparent;
+    }
+
+    /* BUTTONS */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+
+    /* CATEGORIES */
+    .cat-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 10px 14px 4px 14px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cat-chip {
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .cat-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* MAP SIMULATION */
+    .map-box {
+      width: 100%;
+      height: 380px;
+      background: #E2E8F0;
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .map-street {
+      position: absolute;
+      background: white;
+    }
+
+    .pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pin-label {
+      background: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      border: 1px solid var(--primary);
+    }
+
+    .pin-icon {
+      font-size: 1.4rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+    <h1>SaveBite Mobile Frontend</h1>
+    <p>Simulador Visual Interactivo • Flutter Clean Architecture</p>
+  </div>
+
+  <div class="phone-container">
+    <div class="dynamic-island"></div>
+    <div class="phone-screen">
+
+      <!-- ================= 1. SPLASH SCREEN ================= -->
+      <div id="splash-screen" class="screen-view active">
+        <div class="splash-logo">🥖</div>
+        <h2 style="font-family: 'Outfit'; font-size: 2rem; font-weight: 900; margin-bottom: 6px;">SaveBite</h2>
+        <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; color: #A7F3D0;">
+          CERO MERMA • ODS 12
+        </span>
+        <div style="margin-top: 40px; font-size: 0.75rem; color: #BFDBFE;">Rescate de alimentos locales • Salamanca, Gto.</div>
+        <div style="margin-top: 30px;">
+          <button class="btn btn-accent" onclick="goToScreen('login-screen')">Entrar a la Aplicación ➔</button>
+        </div>
+      </div>
+
+      <!-- ================= 2. LOGIN SCREEN ================= -->
+      <div id="login-screen" class="screen-view">
+        <div style="padding: 50px 20px 20px 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <div style="width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🥑</div>
+            <div>
+              <div style="font-weight: 900; font-size: 1.1rem; color: var(--primary);">SaveBite</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">Salamanca, Gto.</div>
+            </div>
+          </div>
+
+          <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 6px;">¡Bienvenido!</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 18px;">
+            Rescata comida de calidad con hasta 70% de descuento en Salamanca.
+          </p>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button id="role-est-btn" class="btn btn-primary" style="flex: 1; font-size: 0.75rem; padding: 10px;" onclick="setRole('consumer')">
+              👤 Consumidor / Cliente
+            </button>
+            <button id="role-com-btn" class="btn btn-outline" style="flex: 1; font-size: 0.75rem; padding: 10px;" onclick="setRole('merchant')">
+              🏪 Comercio Aliado
+            </button>
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 0.72rem; font-weight: 700; color: var(--text);">Correo Electrónico</label>
+            <input id="login-email" type="text" value="cliente@gmail.com" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 10px; margin-top: 4px; font-size: 0.8rem;" />
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <label style="font-size: 0.72rem; font-weight: 700; color: var(--text);">Contraseña</label>
+            <input type="password" value="••••••••" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 10px; margin-top: 4px; font-size: 0.8rem;" />
+          </div>
+
+          <button class="btn btn-primary" onclick="doLogin()">Ingresar a la Plataforma</button>
+
+          <div style="margin-top: 20px; padding: 12px; background: #F0FDF4; border: 1px solid #A7F3D0; border-radius: 10px; font-size: 0.72rem; color: var(--green-dark);">
+            🌱 <strong>ODS 12:</strong> Los excedentes gastronómicos se liquidan en bolsas sorpresa al final de cada jornada.
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 3. MAIN CONSUMER EXPLORE FEED ================= -->
+      <div id="feed-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <div class="bar-brand">
+            <div class="bar-brand-icon">🥑</div>
+            <div>
+              <div class="bar-brand-title">SaveBite</div>
+              <div class="bar-brand-sub">Salamanca, Gto.</div>
+            </div>
+          </div>
+          <button class="role-toggle-btn" onclick="toggleRole()">
+            <span>Modo: <strong id="current-role-badge">Consumidor</strong></span> ▾
+          </button>
+        </div>
+
+        <div class="cat-row">
+          <div class="cat-chip active" onclick="filterCat('Todos', this)">✨ Todos</div>
+          <div class="cat-chip" onclick="filterCat('Panaderías', this)">🥖 Panaderías</div>
+          <div class="cat-chip" onclick="filterCat('Cafeterías', this)">☕ Cafeterías</div>
+          <div class="cat-chip" onclick="filterCat('Fruterías', this)">🍎 Fruterías</div>
+          <div class="cat-chip" onclick="filterCat('Comida Preparada', this)">🍕 Preparada</div>
+        </div>
+
+        <div style="padding: 10px 14px 0 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">5 paquetes disponibles hoy</span>
+          <button onclick="toggleMapFeed()" style="background: white; border: 1px solid var(--border); padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 700; color: var(--primary); cursor: pointer;">
+            🗺️ Alternar Mapa GPS
+          </button>
+        </div>
+
+        <!-- LIST CONTAINER -->
+        <div id="packages-list" class="mobile-body">
+          <!-- Card 1 -->
+          <div class="card" onclick="openDetail(1)">
+            <div class="card-head">
+              <div class="card-emoji">🥐</div>
+              <div class="card-title-col">
+                <div class="card-store">Panadería La Tradición • 0.8 km</div>
+                <div class="card-title">Pack Sorpresa Pan Dulce y Bolillo</div>
+              </div>
+              <div class="card-discount-pill">-63%</div>
+            </div>
+            <div class="card-time">⏰ Recoger hoy: 19:30 - 20:45</div>
+            <div class="card-footer">
+              <div class="card-price-col">
+                <span class="price-old">$130 MXN</span>
+                <span class="price-new">$48 MXN</span>
+              </div>
+              <span style="font-size: 0.7rem; background: #F0FDF4; color: var(--green-dark); padding: 3px 6px; border-radius: 6px; font-weight: 700;">
+                -2.8 kg CO₂
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="card" onclick="openDetail(2)">
+            <div class="card-head">
+              <div class="card-emoji">☕</div>
+              <div class="card-title-col">
+                <div class="card-store">Cafetería La Plazuela • 0.5 km</div>
+                <div class="card-title">Pack Café & Baguette de la Tarde</div>
+              </div>
+              <div class="card-discount-pill">-65%</div>
+            </div>
+            <div class="card-time">⏰ Recoger hoy: 18:00 - 19:15</div>
+            <div class="card-footer">
+              <div class="card-price-col">
+                <span class="price-old">$155 MXN</span>
+                <span class="price-new">$55 MXN</span>
+              </div>
+              <span style="font-size: 0.7rem; background: #F0FDF4; color: var(--green-dark); padding: 3px 6px; border-radius: 6px; font-weight: 700;">
+                -1.9 kg CO₂
+              </span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="card" onclick="openDetail(3)">
+            <div class="card-head">
+              <div class="card-emoji">🍓</div>
+              <div class="card-title-col">
+                <div class="card-store">Frutería Don Chente • 1.2 km</div>
+                <div class="card-title">Canasta de Fruta Dulce para Smoothie</div>
+              </div>
+              <div class="card-discount-pill">-67%</div>
+            </div>
+            <div class="card-time">⏰ Recoger hoy: 17:30 - 19:00</div>
+            <div class="card-footer">
+              <div class="card-price-col">
+                <span class="price-old">$120 MXN</span>
+                <span class="price-new">$40 MXN</span>
+              </div>
+              <span style="font-size: 0.7rem; background: #F0FDF4; color: var(--green-dark); padding: 3px 6px; border-radius: 6px; font-weight: 700;">
+                -3.2 kg CO₂
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAP CONTAINER (HIDDEN INITIALLY) -->
+        <div id="map-container" class="mobile-body" style="display: none;">
+          <div class="map-box">
+            <!-- Road grid -->
+            <div class="map-street" style="top: 100px; left: 0; width: 100%; height: 16px;"></div>
+            <div class="map-street" style="top: 220px; left: 0; width: 100%; height: 16px;"></div>
+            <div class="map-street" style="left: 120px; top: 0; width: 16px; height: 100%;"></div>
+            <div class="map-street" style="left: 240px; top: 0; width: 16px; height: 100%;"></div>
+
+            <!-- River Lerma -->
+            <div style="position: absolute; bottom: 30px; left: 0; width: 100%; height: 26px; background: #BFDBFE; border-radius: 10px;"></div>
+
+            <!-- Pins -->
+            <div class="pin" style="left: 70px; top: 120px;" onclick="openDetail(1)">
+              <span class="pin-label">🥖 Panadería ($48)</span>
+              <span class="pin-icon">📍</span>
+            </div>
+            <div class="pin" style="left: 210px; top: 180px;" onclick="openDetail(2)">
+              <span class="pin-label">☕ Cafetería ($55)</span>
+              <span class="pin-icon">📍</span>
+            </div>
+            <div class="pin" style="left: 60px; top: 280px;" onclick="openDetail(3)">
+              <span class="pin-label">🍎 Frutería ($40)</span>
+              <span class="pin-icon">📍</span>
+            </div>
+            <div class="pin" style="left: 170px; top: 220px;">
+              <span class="pin-label" style="background: var(--secondary); color: white;">🔵 Tu ubicación</span>
+              <span class="pin-icon">📍</span>
+            </div>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-muted); text-align: center;">
+            Toca cualquier pin para abrir el paquete sorpresa del comercio.
+          </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <div class="mobile-bottom-nav">
+          <button class="nav-btn active" onclick="goToScreen('feed-screen')">
+            <span class="icon">🧭</span>
+            <span>Explorar</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('reservations-screen')">
+            <span class="icon">🎟️</span>
+            <span>Mis Reservas</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('impact-screen')">
+            <span class="icon">🌿</span>
+            <span>Impacto ODS</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 4. PACKAGE DETAIL ================= -->
+      <div id="detail-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <button onclick="goToScreen('feed-screen')" style="border: none; background: transparent; font-size: 1.1rem; cursor: pointer;">← Volver</button>
+          <span style="font-weight: 800; font-size: 0.9rem;">Ficha del Paquete</span>
+          <span style="font-size: 1.1rem;">🔗</span>
+        </div>
+
+        <div class="mobile-body">
+          <div style="background: linear-gradient(135deg, #071E36, #0F4C81); color: white; padding: 20px; border-radius: 18px; text-align: center; margin-bottom: 14px;">
+            <div style="font-size: 40px; margin-bottom: 8px;" id="dt-emoji">🥐</div>
+            <div style="font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 12px; display: inline-block; font-weight: 700;" id="dt-cat">Panadería</div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-top: 8px;" id="dt-title">Pack Sorpresa Pan Dulce y Bolillo</h3>
+            <div style="font-size: 0.75rem; color: #BFDBFE;" id="dt-store">Panadería La Tradición</div>
+          </div>
+
+          <!-- Price & Savings -->
+          <div style="background: white; border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Precio SaveBite:</div>
+                <div style="font-size: 1.5rem; font-weight: 900; color: var(--green-dark);" id="dt-price">$48 MXN</div>
+              </div>
+              <div style="text-align: right;">
+                <span style="background: #F58220; color: white; padding: 3px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 800;">-63% DTO</span>
+                <div style="font-size: 0.75rem; text-decoration: line-through; color: var(--text-muted); margin-top: 2px;" id="dt-orig">$130 MXN</div>
+              </div>
+            </div>
+            <div style="margin-top: 10px; padding: 8px; background: #F0FDF4; border-radius: 8px; font-size: 0.75rem; color: var(--green-dark); font-weight: 700; text-align: center;">
+              💰 Ahorras <span id="dt-savings">$82 MXN</span> en tu comida
+            </div>
+          </div>
+
+          <!-- Pickup window -->
+          <div style="background: white; border: 1px solid #FED7AA; border-radius: 14px; padding: 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 26px;">⏰</div>
+            <div>
+              <div style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">Horario de Recogida:</div>
+              <div style="font-size: 0.95rem; font-weight: 800; color: var(--text);" id="dt-time">Hoy 19:30 - 20:45</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">Muestra tu QR en mostrador para recogerlo</div>
+            </div>
+          </div>
+
+          <!-- ODS 12 impact -->
+          <div style="background: #F0FDF4; border: 1px solid #A7F3D0; border-radius: 14px; padding: 14px; margin-bottom: 20px;">
+            <div style="font-size: 0.8rem; font-weight: 800; color: var(--green-dark);">🌱 Impacto Ecológico (ODS 12)</div>
+            <div style="font-size: 0.72rem; color: #065F46; margin-top: 2px;">
+              Mitigas ~2.8 kg de emisiones CO₂e y rescatas ~1.4 kg de comida de ser desechada.
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="doReserve()">
+            ⚡ Reservar Paquete con 1 Toque
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 5. VOUCHER QR SCREEN ================= -->
+      <div id="voucher-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <button onclick="goToScreen('reservations-screen')" style="border: none; background: transparent; font-size: 1.1rem; cursor: pointer;">← Volver</button>
+          <span style="font-weight: 800; font-size: 0.9rem;">Voucher Digital</span>
+          <span style="font-size: 1.1rem;">📥</span>
+        </div>
+
+        <div class="mobile-body" style="text-align: center;">
+          <div style="display: inline-block; background: #F0FDF4; border: 1px solid #A7F3D0; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; color: var(--green-dark); margin-bottom: 12px;">
+            ✓ Guardado localmente (Offline-First)
+          </div>
+
+          <div style="background: white; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+            <div style="background: var(--primary); color: white; padding: 14px;">
+              <div style="font-size: 0.7rem; color: #BFDBFE;">TICKET DE CANJE SAVEBITE</div>
+              <h4 style="font-size: 1.05rem; font-weight: 800;" id="vc-title">Pack Sorpresa Pan Dulce</h4>
+              <div style="font-size: 0.75rem;" id="vc-store">Panadería La Tradición</div>
+            </div>
+
+            <!-- QR Box -->
+            <div class="qr-box">
+              <div class="qr-grid">
+                <div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div>
+                <div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div><div class="qr-cell"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div>
+                <div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div>
+                <div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div>
+                <div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
+                <div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell corner"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div>
+                <div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell corner"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
+              </div>
+            </div>
+
+            <div style="font-weight: 900; letter-spacing: 2px; color: var(--primary); font-size: 1.1rem;" id="vc-code">RES-8921-SB</div>
+            <div style="font-size: 0.68rem; color: var(--text-muted); margin-bottom: 14px;">Presenta este código al personal en caja</div>
+
+            <div style="border-top: 1px dashed var(--border); padding: 12px; text-align: left; font-size: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: var(--text-muted);">Horario Límite:</span>
+                <strong style="color: var(--accent-hover);" id="vc-time">Hoy 19:30 - 20:45</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Total Pagado:</span>
+                <strong style="color: var(--green-dark);">$48 MXN</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <button class="btn btn-primary" onclick="goToScreen('reservations-screen')">Volver a Mis Reservas</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 6. RESERVATIONS LIST ================= -->
+      <div id="reservations-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <div class="bar-brand">
+            <div class="bar-brand-icon">🎟️</div>
+            <div>
+              <div class="bar-brand-title">Mis Reservas</div>
+              <div class="bar-brand-sub">Tus vouchers activos e historial</div>
+            </div>
+          </div>
+          <button class="role-toggle-btn" onclick="toggleRole()">Cambiar Rol</button>
+        </div>
+
+        <div class="mobile-body">
+          <div class="card" onclick="openVoucher('RES-8921-SB', 'Pack Sorpresa Pan Dulce', 'Panadería La Tradición', '19:30 - 20:45')">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 44px; height: 44px; background: #EFF6FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px;">📱</div>
+              <div style="flex: 1;">
+                <div style="font-size: 0.88rem; font-weight: 800;">Pack Sorpresa Pan Dulce</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Panadería La Tradición</div>
+                <div style="font-size: 0.7rem; color: var(--accent-hover); font-weight: 700; margin-top: 2px;">⏰ Hoy 19:30 - 20:45</div>
+              </div>
+              <span style="background: #F0FDF4; color: var(--green-dark); padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;">ACTIVO</span>
+            </div>
+          </div>
+
+          <div class="card" style="opacity: 0.7;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <div style="width: 44px; height: 44px; background: #F1F5F9; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px;">☕</div>
+              <div style="flex: 1;">
+                <div style="font-size: 0.88rem; font-weight: 800;">Pack Café & Baguette</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Cafetería UTS</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Canjeado ayer • $55 MXN</div>
+              </div>
+              <span style="background: #F1F5F9; color: var(--text-muted); padding: 3px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 800;">CANJEADO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mobile-bottom-nav">
+          <button class="nav-btn" onclick="goToScreen('feed-screen')">
+            <span class="icon">🧭</span>
+            <span>Explorar</span>
+          </button>
+          <button class="nav-btn active" onclick="goToScreen('reservations-screen')">
+            <span class="icon">🎟️</span>
+            <span>Mis Reservas</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('impact-screen')">
+            <span class="icon">🌿</span>
+            <span>Impacto ODS</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 7. IMPACT SCREEN ================= -->
+      <div id="impact-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <div class="bar-brand">
+            <div class="bar-brand-icon" style="background: var(--green-dark);">🌿</div>
+            <div>
+              <div class="bar-brand-title">Impacto ODS 12</div>
+              <div class="bar-brand-sub">Tu contribución al medio ambiente</div>
+            </div>
+          </div>
+          <button class="role-toggle-btn" onclick="toggleRole()">Cambiar Rol</button>
+        </div>
+
+        <div class="mobile-body">
+          <div style="background: linear-gradient(135deg, #10B981, #047857); color: white; padding: 18px; border-radius: 18px; margin-bottom: 14px;">
+            <div style="font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 10px; display: inline-block; font-weight: 800;">ODS 12 • CERO MERMA</div>
+            <h3 style="font-size: 1.25rem; font-weight: 900; margin-top: 6px;">Huella Verde en Salamanca</h3>
+            <p style="font-size: 0.72rem; color: #D1FAE5; margin-top: 4px;">Alimentos rescatados de panaderías y cafeterías locales.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+            <div style="background: white; border: 1px solid var(--border); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 20px;">🥑</div>
+              <div style="font-size: 1.3rem; font-weight: 900; color: var(--green-dark); margin-top: 4px;" id="imp-kg">8.6 kg</div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Comida Rescatada</div>
+            </div>
+            <div style="background: white; border: 1px solid var(--border); padding: 14px; border-radius: 14px;">
+              <div style="font-size: 20px;">☁️</div>
+              <div style="font-size: 1.3rem; font-weight: 900; color: var(--primary); margin-top: 4px;" id="imp-co2">17.2 kg</div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">CO₂ Mitigado</div>
+            </div>
+          </div>
+
+          <div style="background: white; border: 1px solid var(--border); padding: 14px; border-radius: 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 26px;">💰</div>
+            <div>
+              <div style="font-size: 1.25rem; font-weight: 900; color: var(--text);" id="imp-money">$520 MXN</div>
+              <div style="font-size: 0.68rem; color: var(--text-muted);">Dinero Total Ahorrado en Salamanca</div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.82rem; font-weight: 800; margin-bottom: 8px;">Insignias Ecológicas Ganadas</div>
+
+          <div style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <div style="font-size: 22px;">🌱</div>
+            <div style="flex: 1;">
+              <div style="font-size: 0.78rem; font-weight: 800;">Rescatador Novato</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">Rescataste tu primer paquete de comida.</div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--green-dark); font-weight: 800;">✓ Ganada</span>
+          </div>
+
+          <div style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px;">
+            <div style="font-size: 22px;">🥖</div>
+            <div style="flex: 1;">
+              <div style="font-size: 0.78rem; font-weight: 800;">Amigo de Panaderías</div>
+              <div style="font-size: 0.65rem; color: var(--text-muted);">Salvaste más de 5 kg de pan dulce y bolillos.</div>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--green-dark); font-weight: 800;">✓ Ganada</span>
+          </div>
+        </div>
+
+        <div class="mobile-bottom-nav">
+          <button class="nav-btn" onclick="goToScreen('feed-screen')">
+            <span class="icon">🧭</span>
+            <span>Explorar</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('reservations-screen')">
+            <span class="icon">🎟️</span>
+            <span>Mis Reservas</span>
+          </button>
+          <button class="nav-btn active" onclick="goToScreen('impact-screen')">
+            <span class="icon">🌿</span>
+            <span>Impacto ODS</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 8. MERCHANT DASHBOARD ================= -->
+      <div id="merchant-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <div class="bar-brand">
+            <div class="bar-brand-icon" style="background: var(--accent);">🏪</div>
+            <div>
+              <div class="bar-brand-title">Panadería La Tradición</div>
+              <div class="bar-brand-sub">Panel de Comercio Aliado</div>
+            </div>
+          </div>
+          <button class="role-toggle-btn" onclick="toggleRole()">Cambiar Rol</button>
+        </div>
+
+        <div class="mobile-body">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+            <div style="background: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.15rem; font-weight: 900; color: var(--primary);">2</div>
+              <div style="font-size: 0.62rem; color: var(--text-muted);">Packs Activos</div>
+            </div>
+            <div style="background: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.15rem; font-weight: 900; color: var(--green-dark);">4</div>
+              <div style="font-size: 0.62rem; color: var(--text-muted);">Canjeados Hoy</div>
+            </div>
+            <div style="background: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.15rem; font-weight: 900; color: var(--accent);">6.2 kg</div>
+              <div style="font-size: 0.62rem; color: var(--text-muted);">Merma Evitada</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+            <button class="btn btn-accent" style="flex: 1; font-size: 0.75rem; padding: 10px;" onclick="goToScreen('scanner-screen')">
+              📷 Escanear QR
+            </button>
+            <button class="btn btn-primary" style="flex: 1; font-size: 0.75rem; padding: 10px;" onclick="goToScreen('create-pkg-screen')">
+              + Publicar Pack
+            </button>
+          </div>
+
+          <div style="font-size: 0.82rem; font-weight: 800; margin-bottom: 8px;">Packs Publicados por tu Negocio</div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+              <strong style="font-size: 0.85rem;">Pack Pan Dulce y Bolillo</strong>
+              <span style="font-size: 0.7rem; background: #EFF6FF; color: var(--primary); padding: 2px 6px; border-radius: 6px; font-weight: 800;">3 disp.</span>
+            </div>
+            <div style="font-size: 0.7rem; color: var(--accent-hover); margin-top: 3px;">Horario: 19:30 - 20:45</div>
+            <div style="font-size: 0.75rem; color: var(--green-dark); font-weight: 800; margin-top: 3px;">$48 MXN (Normal: $130 MXN)</div>
+          </div>
+        </div>
+
+        <div class="mobile-bottom-nav">
+          <button class="nav-btn active" onclick="goToScreen('merchant-screen')">
+            <span class="icon">📊</span>
+            <span>Panel</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('scanner-screen')">
+            <span class="icon">📷</span>
+            <span>Escanear QR</span>
+          </button>
+          <button class="nav-btn" onclick="goToScreen('create-pkg-screen')">
+            <span class="icon">➕</span>
+            <span>Publicar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 9. QR SCANNER SCREEN ================= -->
+      <div id="scanner-screen" class="screen-view" style="background: black; color: white;">
+        <div class="mobile-app-bar" style="background: black; border-color: #333; color: white;">
+          <button onclick="goToScreen('merchant-screen')" style="border: none; background: transparent; font-size: 1.1rem; color: white; cursor: pointer;">← Volver</button>
+          <span style="font-weight: 800; font-size: 0.9rem; color: white;">Lector de Canje QR</span>
+          <span style="font-size: 1.1rem;">⚡</span>
+        </div>
+
+        <div class="mobile-body" style="text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="padding: 10px; font-size: 0.75rem; color: #CBD5E1;">
+            Apunta la cámara al voucher QR del cliente para validar la entrega en mostrador.
+          </div>
+
+          <!-- Scanner Reticle -->
+          <div style="width: 220px; height: 220px; border: 2px solid rgba(255,255,255,0.4); border-radius: 20px; margin: 20px auto; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; width: 24px; height: 24px; border-top: 4px solid var(--secondary); border-left: 4px solid var(--secondary);"></div>
+            <div style="position: absolute; top: 0; right: 0; width: 24px; height: 24px; border-top: 4px solid var(--secondary); border-right: 4px solid var(--secondary);"></div>
+            <div style="position: absolute; bottom: 0; left: 0; width: 24px; height: 24px; border-bottom: 4px solid var(--secondary); border-left: 4px solid var(--secondary);"></div>
+            <div style="position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-bottom: 4px solid var(--secondary); border-right: 4px solid var(--secondary);"></div>
+            <!-- Laser -->
+            <div style="position: absolute; left: 0; width: 100%; height: 3px; background: var(--secondary); box-shadow: 0 0 10px var(--secondary); animation: scanLaser 2s infinite alternate;"></div>
+          </div>
+
+          <style>
+            @keyframes scanLaser {
+              from { top: 10px; }
+              to { top: 200px; }
+            }
+          </style>
+
+          <div>
+            <button class="btn btn-success" style="margin-bottom: 10px;" onclick="simulateScan()">
+              ✓ Simular Escaneo de Voucher (RES-8921-SB)
+            </button>
+            <div style="font-size: 0.68rem; color: #94A3B8;">Validación de canje instantánea (< 2 segundos)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 10. CREATE PACKAGE SCREEN ================= -->
+      <div id="create-pkg-screen" class="screen-view">
+        <div class="mobile-app-bar">
+          <button onclick="goToScreen('merchant-screen')" style="border: none; background: transparent; font-size: 1.1rem; cursor: pointer;">← Volver</button>
+          <span style="font-weight: 800; font-size: 0.9rem;">Publicar Paquete</span>
+          <span></span>
+        </div>
+
+        <div class="mobile-body">
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 0.72rem; font-weight: 700;">Título del Paquete Sorpresa</label>
+            <input id="new-pkg-title" type="text" value="Pack Pan Dulce Especial" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+              <label style="font-size: 0.72rem; font-weight: 700;">Precio Normal ($)</label>
+              <input id="new-pkg-orig" type="number" value="140" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 0.72rem; font-weight: 700;">Precio SaveBite ($)</label>
+              <input id="new-pkg-disc" type="number" value="50" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+              <label style="font-size: 0.72rem; font-weight: 700;">Stock (unidades)</label>
+              <input id="new-pkg-stock" type="number" value="4" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 0.72rem; font-weight: 700;">Peso est. (kg)</label>
+              <input id="new-pkg-kg" type="number" value="1.2" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.72rem; font-weight: 700;">Ventana de Recogida</label>
+            <input id="new-pkg-time" type="text" value="19:45 - 20:45" style="width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; margin-top: 3px; font-size: 0.8rem;" />
+          </div>
+
+          <button class="btn btn-primary" onclick="publishPackage()">
+            Publicar Lote de Excedentes Ahora
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentRole = 'consumer';
+
+    function goToScreen(screenId) {
+      document.querySelectorAll('.screen-view').forEach(el => el.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function setRole(role) {
+      currentRole = role;
+      if (role === 'consumer') {
+        document.getElementById('role-est-btn').className = 'btn btn-primary';
+        document.getElementById('role-com-btn').className = 'btn btn-outline';
+        document.getElementById('login-email').value = 'cliente@gmail.com';
+      } else {
+        document.getElementById('role-est-btn').className = 'btn btn-outline';
+        document.getElementById('role-com-btn').className = 'btn btn-primary';
+        document.getElementById('login-email').value = 'panaderia.latradicion@gmail.com';
+      }
+    }
+
+    function doLogin() {
+      if (currentRole === 'consumer') {
+        document.getElementById('current-role-badge').innerText = 'Consumidor';
+        goToScreen('feed-screen');
+      } else {
+        goToScreen('merchant-screen');
+      }
+    }
+
+    function toggleRole() {
+      if (currentRole === 'consumer') {
+        currentRole = 'merchant';
+        goToScreen('merchant-screen');
+      } else {
+        currentRole = 'consumer';
+        document.getElementById('current-role-badge').innerText = 'Consumidor';
+        goToScreen('feed-screen');
+      }
+    }
+
+    function toggleMapFeed() {
+      const list = document.getElementById('packages-list');
+      const map = document.getElementById('map-container');
+      if (list.style.display === 'none') {
+        list.style.display = 'block';
+        map.style.display = 'none';
+      } else {
+        list.style.display = 'none';
+        map.style.display = 'block';
+      }
+    }
+
+    function filterCat(catName, el) {
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function openDetail(id) {
+      if (id === 1) {
+        document.getElementById('dt-emoji').innerText = '🥐';
+        document.getElementById('dt-cat').innerText = 'Panadería';
+        document.getElementById('dt-title').innerText = 'Pack Sorpresa Pan Dulce y Bolillo';
+        document.getElementById('dt-store').innerText = 'Panadería La Tradición';
+        document.getElementById('dt-price').innerText = '$48 MXN';
+        document.getElementById('dt-orig').innerText = '$130 MXN';
+        document.getElementById('dt-savings').innerText = '$82 MXN';
+        document.getElementById('dt-time').innerText = 'Hoy 19:30 - 20:45';
+      } else if (id === 2) {
+        document.getElementById('dt-emoji').innerText = '☕';
+        document.getElementById('dt-cat').innerText = 'Cafetería';
+        document.getElementById('dt-title').innerText = 'Pack Café & Baguette de la Tarde';
+        document.getElementById('dt-store').innerText = 'Cafetería La Plazuela';
+        document.getElementById('dt-price').innerText = '$55 MXN';
+        document.getElementById('dt-orig').innerText = '$155 MXN';
+        document.getElementById('dt-savings').innerText = '$100 MXN';
+        document.getElementById('dt-time').innerText = 'Hoy 18:00 - 19:15';
+      } else {
+        document.getElementById('dt-emoji').innerText = '🍎';
+        document.getElementById('dt-cat').innerText = 'Frutería';
+        document.getElementById('dt-title').innerText = 'Canasta de Fruta Dulce';
+        document.getElementById('dt-store').innerText = 'Frutería Don Chente';
+        document.getElementById('dt-price').innerText = '$40 MXN';
+        document.getElementById('dt-orig').innerText = '$120 MXN';
+        document.getElementById('dt-savings').innerText = '$80 MXN';
+        document.getElementById('dt-time').innerText = 'Hoy 17:30 - 19:00';
+      }
+      goToScreen('detail-screen');
+    }
+
+    function doReserve() {
+      const code = 'RES-' + Math.floor(1000 + Math.random() * 9000) + '-SB';
+      openVoucher(code, document.getElementById('dt-title').innerText, document.getElementById('dt-store').innerText, document.getElementById('dt-time').innerText);
+    }
+
+    function openVoucher(code, title, store, time) {
+      document.getElementById('vc-code').innerText = code;
+      document.getElementById('vc-title').innerText = title;
+      document.getElementById('vc-store').innerText = store;
+      document.getElementById('vc-time').innerText = time;
+      goToScreen('voucher-screen');
+    }
+
+    function simulateScan() {
+      alert('✅ ¡ENTREGA VALIDADA CON ÉXITO!\n\nVoucher: RES-8921-SB\nComercio: Panadería La Tradición\nEntrega completada en mostrador.\nMerma evitada: 1.4 kg.');
+      goToScreen('merchant-screen');
+    }
+
+    function publishPackage() {
+      alert('✅ ¡Paquete sorpresa publicado con éxito!\nYa es visible en el feed para toda la comunidad.');
+      goToScreen('merchant-screen');
+    }
+  </script>
+</body>
+</html>

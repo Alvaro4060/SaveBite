@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 1: Plan del Proceso de Desarrollo Móvil | SaveBite - UTS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --primary: #0F4C81;
+      --primary-dark: #0A2E50;
+      --primary-light: #2563EB;
+      --secondary: #00AE9D;
+      --secondary-dark: #0E7490;
+      --accent: #F58220;
+      --accent-hover: #EA580C;
+      --success: #10B981;
+      --green-dark: #047857;
+      --purple: #8B5CF6;
+      --dark: #0F172A;
+      --text: #334155;
+      --text-muted: #64748B;
+      --bg: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --border-focus: #94A3B8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      line-height: 1.65;
+      padding: 30px 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .document-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 20px 40px -15px rgba(15, 76, 129, 0.15), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* ==============================================================
+       PORTADA COLORIDA, MODERNA Y PROFESIONAL
+       ============================================================== */
+    .cover-container {
+      min-height: 1040px;
+      position: relative;
+      background: linear-gradient(145deg, #071E36 0%, #0F4C81 40%, #0A698A 75%, #00AE9D 100%);
+      color: white;
+      padding: 60px 60px 50px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .cover-container::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -100px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(0, 174, 157, 0.35) 0%, rgba(245, 130, 32, 0.15) 60%, transparent 80%);
+      border-radius: 50%;
+      filter: blur(40px);
+      z-index: 1;
+    }
+
+    .cover-container::after {
+      content: "";
+      position: absolute;
+      bottom: -150px;
+      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(245, 130, 32, 0.25) 0%, rgba(15, 76, 129, 0.2) 60%, transparent 80%);
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 1;
+    }
+
+    .cover-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .cover-header {
+      text-align: center;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 25px;
+    }
+
+    .uts-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      padding: 6px 18px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #A7F3D0;
+      margin-bottom: 15px;
+    }
+
+    .cover-institution {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-division {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #E2E8F0;
+      margin-top: 4px;
+    }
+
+    .cover-career {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #5EEAD4;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cover-hero {
+      text-align: center;
+      margin: 45px 0 35px 0;
+    }
+
+    .phase-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #F58220 0%, #EA580C 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 24px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 15px rgba(245, 130, 32, 0.4);
+      margin-bottom: 20px;
+    }
+
+    .cover-main-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: #FFFFFF;
+      margin-bottom: 15px;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-app-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(90deg, #FFFFFF 20%, #5EEAD4 60%, #FDBA74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+    }
+
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #F1F5F9;
+      max-width: 720px;
+      margin: 0 auto;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 22px;
+      margin-top: 10px;
+    }
+
+    .cover-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .cover-card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #FCD34D;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .meta-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .meta-label {
+      color: #CBD5E1;
+      font-weight: 400;
+    }
+
+    .meta-val {
+      font-weight: 700;
+      color: #FFFFFF;
+      text-align: right;
+    }
+
+    .team-list {
+      list-style: none;
+    }
+
+    .team-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .team-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .team-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--secondary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px #5EEAD4;
+      flex-shrink: 0;
+    }
+
+    .team-role-tag {
+      font-size: 0.72rem;
+      background: rgba(0, 174, 157, 0.3);
+      border: 1px solid rgba(94, 234, 212, 0.5);
+      color: #A7F3D0;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: auto;
+      font-weight: 600;
+    }
+
+    .cover-footer {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #94A3B8;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding-top: 16px;
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ==============================================================
+       CUERPO DEL REPORTE
+       ============================================================== */
+    .report-body {
+      padding: 60px 65px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 48px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-header:first-of-type {
+      margin-top: 0;
+    }
+
+    .section-badge-num {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 10px rgba(15, 76, 129, 0.25);
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      color: var(--primary-dark);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.18rem;
+      color: var(--primary);
+      margin: 22px 0 12px 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h4 {
+      font-size: 1.02rem;
+      color: #1E293B;
+      font-weight: 700;
+      margin: 14px 0 6px 0;
+    }
+
+    p {
+      color: #475569;
+      margin-bottom: 14px;
+      font-size: 1rem;
+      text-align: justify;
+    }
+
+    .lead-paragraph {
+      font-size: 1.06rem;
+      color: #1E293B;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+
+    .info-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+
+    .info-card.teal {
+      border-left-color: var(--secondary);
+      background: #F0FDF4;
+    }
+
+    .info-card.orange {
+      border-left-color: var(--accent);
+      background: #FFFBEB;
+    }
+
+    .info-card.purple {
+      border-left-color: var(--purple);
+      background: #FAF5FF;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+      position: relative;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .tag-core {
+      background: #EFF6FF;
+      color: #1E40AF;
+      border: 1px solid #BFDBFE;
+    }
+
+    .tag-special {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-desc {
+      font-size: 0.92rem;
+      color: #475569;
+      line-height: 1.55;
+      text-align: left;
+      margin-bottom: 0;
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 22px 0;
+      font-size: 0.93rem;
+    }
+
+    .styled-table th {
+      background: linear-gradient(90deg, #0F4C81 0%, #153e6b 100%);
+      color: white;
+      padding: 13px 16px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      text-align: left;
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .styled-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+      vertical-align: top;
+    }
+
+    .styled-table tr:nth-child(even) td {
+      background-color: #F8FAFC;
+    }
+
+    .role-badge {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .role-po { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+    .role-sm { background: #E0E7FF; color: #3730A3; border: 1px solid #C7D2FE; }
+    .role-dev { background: #CCFBF1; color: #115E59; border: 1px solid #99F6E4; }
+    .role-backend { background: #FCE7F3; color: #9D174D; border: 1px solid #FBCFE8; }
+
+    .diagram-container {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin: 25px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      text-align: center;
+    }
+
+    .diagram-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .diagram-caption {
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .scrum-events-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .scrum-event-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .scrum-event-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .scrum-event-time {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .scrum-event-desc {
+      font-size: 0.82rem;
+      color: #64748B;
+      line-height: 1.4;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .custom-bullet-list {
+      list-style: none;
+      margin: 14px 0;
+    }
+
+    .custom-bullet-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 12px;
+      font-size: 0.98rem;
+      color: #334155;
+    }
+
+    .custom-bullet-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 20px;
+      height: 20px;
+      background: #EFF6FF;
+      color: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 900;
+      border: 1px solid #BFDBFE;
+    }
+
+    .custom-bullet-list li strong {
+      color: var(--primary-dark);
+    }
+
+    .tech-stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .tech-chip {
+      background: white;
+      border: 1px solid #CBD5E1;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #1E293B;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .tech-chip span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .tech-flutter span { background: #02569B; }
+    .tech-firebase span { background: #FFA000; }
+    .tech-maps span { background: #34A853; }
+    .tech-scanner span { background: #00AE9D; }
+
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+      .document-wrapper {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+      .cover-container {
+        min-height: 100vh;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .report-body {
+        padding: 40px 45px;
+      }
+      .info-card, .diagram-container, .features-grid, .styled-table {
+        page-break-inside: avoid;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="document-wrapper">
+
+  <!-- ==============================================================
+       1. PORTADA COLORIDA Y PROFESIONAL
+       ============================================================== -->
+  <div class="cover-container">
+    <div class="cover-content">
+      
+      <!-- Encabezado Institucional -->
+      <div class="cover-header">
+        <div class="uts-pill-badge">
+          <span>UTS</span> • División TIC • 10° Cuatrimestre
+        </div>
+        <div class="cover-institution">Universidad Tecnológica de Salamanca</div>
+        <div class="cover-division">División de Tecnologías de la Información y Comunicación</div>
+        <div class="cover-career">Ingeniería en Desarrollo y Gestión de Software (IDGS)</div>
+      </div>
+
+      <!-- Título de la Fase y Nombre de la Aplicación -->
+      <div class="cover-hero">
+        <div class="phase-badge">Fase 1: Plan del Proceso de Desarrollo Móvil</div>
+        <h2 class="cover-main-title">Plataforma Móvil Colaborativa de Rescate de Alimentos</h2>
+        <div class="cover-app-name">SaveBite</div>
+        <p class="cover-subtitle">
+          Excedentes de Alimentos Locales a Precio Reducido • Mitigación de Merma y Consumo Responsable (ODS 12)
+        </p>
+      </div>
+
+      <!-- Cuadrícula de Metadatos -->
+      <div class="cover-meta-grid">
+        
+        <!-- Tarjeta de Datos Académicos -->
+        <div class="cover-card">
+          <div class="cover-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Detalles de la Asignatura
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Asignatura:</span>
+            <span class="meta-val">Desarrollo Móvil Integral</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Carrera:</span>
+            <span class="meta-val">IDGS (10° Cuatrimestre)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Docente:</span>
+            <span class="meta-val">Ericka Nohemí Álvarez Valencia</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Fecha de Entrega:</span>
+            <span class="meta-val" style="color: #FCD34D;">16 de Octubre de 2026</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Modalidad:</span>
+            <span class="meta-val">Equipo de Desarrollo Ágil</span>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Integrantes del Equipo -->
+        <div class="cover-card">
+          <div class="cover-card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            Integrantes del Equipo (IDGS)
+          </div>
+          <ul class="team-list">
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Alvaro Jesús Chávez Bazana</span>
+              <span class="team-role-tag">Product Owner</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Guillermo Yael Berlín Fomperosa</span>
+              <span class="team-role-tag">Scrum Master</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Juan Pablo Vega Uribe</span>
+              <span class="team-role-tag">Lead Mobile Dev</span>
+            </li>
+            <li class="team-item">
+              <span class="team-dot"></span>
+              <span>Diego Sebastián Vilegas Enriquez</span>
+              <span class="team-role-tag">Backend & Data</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Pie de Portada -->
+      <div class="cover-footer">
+        <span>Universidad Tecnológica de Salamanca — Salamanca, Gto.</span>
+        <span>Entregable Oficial: Documento Digital Fase 1</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       CUERPO DEL INFORME (ESTRUCTURA SOLICITADA EN EL PDF)
+       ============================================================== -->
+  <div class="report-body">
+
+    <!-- SECCIÓN 2: INTRODUCCIÓN -->
+    <div class="section-header">
+      <div class="section-badge-num">2</div>
+      <h2>Introducción</h2>
+    </div>
+
+    <p class="lead-paragraph">
+      El desarrollo de soluciones móviles exitosas exige equilibrar velocidad de comercialización, calidad arquitectónica y una respuesta contundente a problemáticas socioeconómicas y ambientales reales. Iniciar la codificación de un proyecto móvil sin una fase previa de análisis de requerimientos, alcance y planificación estratégica conduce invariablemente a la acumulación de deuda técnica y al sobrecosto de recursos.
+    </p>
+
+    <div class="info-card">
+      <h4>¿Por qué es indispensable planificar un proyecto antes de programar?</h4>
+      <p>
+        Planificar permite anticipar las limitaciones y restricciones técnicas inherentes a la plataforma móvil antes de escribir la primera línea de código: consumo de batería derivado del uso continuo del sensor GPS, gestión de permisos críticos en el sistema operativo (acceso a cámara en tiempo real para lectura óptica y notificaciones push en segundo plano), volatilidad de la cobertura de datos móviles en la calle y diseño de esquemas de datos geoespaciales eficientes. La planificación previa evita retrabajos de semanas, desacuerdos entre integrantes y asegura que la arquitectura seleccionada sea capaz de escalar sin colapsar.
+      </p>
+    </div>
+
+    <div class="info-card teal">
+      <h4>¿Cómo ayudan las metodologías ágiles a los equipos de desarrollo móvil?</h4>
+      <p>
+        El ecosistema móvil se caracteriza por ciclos de innovación acelerados y una exigencia inquebrantable de usabilidad por parte de los usuarios. Las metodologías ágiles (Scrum, Kanban) proporcionan ventajas estratégicas decisivas:
+      </p>
+      <ul class="custom-bullet-list">
+        <li><strong>Entregas iterativas e incrementales (Sprints):</strong> El equipo produce builds ejecutables funcionales (APKs) cada 2 semanas, facilitando que los usuarios de prueba y la docente evalúen el producto en dispositivos reales desde etapas tempranas.</li>
+        <li><strong>Adaptabilidad y mitigación de riesgos de hardware:</strong> Si el SDK de mapas o el escáner de códigos QR presenta problemas de rendimiento, el equipo ajusta el backlog en la siguiente iteración sin comprometer el calendario escolar.</li>
+        <li><strong>Transparencia y autoorganización:</strong> La sincronización continua en tableros visuales y reuniones diarias de 10 minutos visibiliza los bloqueos de cada integrante y orienta el esfuerzo hacia las funcionalidades de mayor impacto.</li>
+      </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 3: DESCRIPCIÓN DEL PROYECTO MÓVIL -->
+    <div class="section-header">
+      <div class="section-badge-num">3</div>
+      <h2>Descripción del Proyecto Móvil</h2>
+    </div>
+
+    <div class="info-card orange">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0; color: #9A3412;">Nombre Tentativo de la Aplicación</h3>
+        <span style="background: #F97316; color: white; padding: 4px 12px; border-radius: 9999px; font-weight: 800; font-size: 0.82rem; letter-spacing: 1px;">SAVEBITE (CEROMERMA)</span>
+      </div>
+      <p style="margin-bottom: 0;">
+        <strong>SaveBite</strong> es una plataforma móvil colaborativa de economía circular que conecta a establecimientos gastronómicos locales (panaderías, pastelerías, cafeterías, fruterías y pizzerías) con la comunidad universitaria y urbana para rescatar comida del día en perfecto estado mediante "Paquetes Sorpresa" con descuentos del 50% al 70% antes del horario de cierre.
+      </p>
+    </div>
+
+    <h3>Breve Descripción de su Propósito</h3>
+    <p>
+      En las zonas comerciales y universitarias de Salamanca y sus alrededores, decenas de negocios de alimentos preparados generan diariamente excedentes que, a pesar de estar en perfecto estado para su consumo, son desechados al término de la jornada comercial debido a la falta de un canal dinámico de liquidación inmediata. Simultáneamente, miles de estudiantes universitarios y jóvenes foráneos enfrentan dificultades económicas para costear alimentos preparados de calidad.
+    </p>
+    <p>
+      <strong>SaveBite</strong> resuelve esta brecha creando un mercado hiperlocal eficiente: los comercios publican a media tarde sus lotes de excedentes en forma de "Paquetes Sorpresa" a precios reducidos, mientras que los usuarios exploran en un mapa interactivo con GPS, reservan in-app y pasan a recoger el paquete al mostrador antes del cierre validando su entrega mediante un código QR dinámico. El proyecto responde de manera directa a los <strong>Objetivos de Desarrollo Sostenible (ODS de la ONU)</strong>: ODS 12 (Producción y Consumo Responsables) y ODS 2 (Hambre Cero).
+    </p>
+
+    <h3>Público Objetivo (Segmentos de Usuario)</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 18px 0;">
+      
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--primary); border-radius: 10px; padding: 16px;">
+        <h4 style="color: var(--primary); margin-top: 0; font-size: 0.96rem;">👨‍🎓 Estudiantes UTS</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Alumnos de ingeniería y jóvenes foráneos con presupuesto diario ajustado. Buscan comida fresca, variada y económica cerca de sus rutas habituales sin complicaciones.
+        </p>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--secondary); border-radius: 10px; padding: 16px;">
+        <h4 style="color: var(--secondary-dark); margin-top: 0; font-size: 0.96rem;">🏪 Comercios Aliados</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Panaderías, cafeterías y fruterías locales que buscan recuperar costos de materia prima, eliminar costos de merma y atraer nuevos clientes a su mostrador.
+        </p>
+      </div>
+
+      <div style="background: white; border: 1px solid var(--border); border-top: 4px solid var(--accent); border-radius: 10px; padding: 16px;">
+        <h4 style="color: #C2410C; margin-top: 0; font-size: 0.96rem;">🌱 Consumidores Eco</h4>
+        <p style="font-size: 0.88rem; margin-bottom: 0; color: #475569;">
+          Personas comprometidas con la sostenibilidad, interesadas en reducir su huella de carbono y evitar el desperdicio innecesario de recursos naturales.
+        </p>
+      </div>
+
+    </div>
+
+    <h3>Funcionalidades Principales de la Aplicación</h3>
+    <p>
+      El sistema integra el conjunto de características fijas esenciales apoyadas en el hardware móvil más la característica innovadora propuesta por el equipo:
+    </p>
+
+    <div class="features-grid">
+      
+      <!-- Función 1 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 1</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Mapa GPS y Geolocalización en Vivo
+        </div>
+        <p class="feature-desc">
+          Exploración visual interactiva en tiempo real con Google Maps SDK que muestra los comercios cercanos con paquetes disponibles mediante pines categorizados, cálculo automático de distancia y rutas de recolección a pie o en vehículo.
+        </p>
+      </div>
+
+      <!-- Función 2 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 2</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          Catálogo y Reserva In-App de Paquetes
+        </div>
+        <p class="feature-desc">
+          Ficha detallada por comercio que muestra el valor original tachado vs. precio con descuento (50% al 70%), horario estricto de recogida (ej. 19:30 a 20:30 hrs), cantidad restante en stock y botón de reserva inmediata con 1 toque.
+        </p>
+      </div>
+
+      <!-- Función 3 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 3</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><rect x="7" y="7" width="10" height="10"></rect></svg>
+          Validación Segura con Cámara y Código QR
+        </div>
+        <p class="feature-desc">
+          Cierre instantáneo de la transacción en mostrador: la app del usuario genera un voucher digital con QR dinámico con token de un solo uso; el comerciante escanea el código con la cámara de su teléfono para confirmar la entrega en menos de 2 segundos.
+        </p>
+      </div>
+
+      <!-- Función 4 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 4</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Alertas y Notificaciones Push (FCM)
+        </div>
+        <p class="feature-desc">
+          Disparo de alertas inmediatas cuando las panaderías, cafeterías o fruterías favoritas del usuario publican nuevos paquetes sorpresa del día, además de recordatorios preventivos cuando restan 30 minutos de la ventana de recogida.
+        </p>
+      </div>
+
+      <!-- Función 5 -->
+      <div class="feature-box">
+        <span class="feature-tag tag-core">Característica Fija • Core 5</span>
+        <div class="feature-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><line x1="2" y1="20" x2="2.01" y2="20"></line></svg>
+          Soporte Offline-First con Caché Local
+        </div>
+        <p class="feature-desc">
+          Persistencia local (Hive / SQLite) que guarda los tickets y vouchers reservados en el almacenamiento del dispositivo, permitiendo al usuario presentar su código QR al comerciante aun si se queda sin señal de datos en la vía pública.
+        </p>
+      </div>
+
+      <!-- Función 6: Característica Adicional Propuesta -->
+      <div class="feature-box" style="border: 2px solid #F59E0B; background: #FFFDF5;">
+        <span class="feature-tag tag-special">★ Característica Adicional Propuesta por el Equipo</span>
+        <div class="feature-title" style="color: #B45309;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+          Calculadora de Impacto ODS (CO2 y Ahorro)
+        </div>
+        <p class="feature-desc">
+          Módulo gamificado en el perfil que calcula los kilogramos de comida rescatados del vertedero, el dinero acumulado ahorrado y los kg de emisiones de CO2 equivalente evitados en cada compra, otorgando insignias ecológicas y respaldando el ODS 12 de la ONU.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 4: METODOLOGÍA ÁGIL SELECCIONADA -->
+    <div class="section-header">
+      <div class="section-badge-num">4</div>
+      <h2>Metodología Ágil Seleccionada</h2>
+    </div>
+
+    <div class="info-card teal">
+      <h3 style="margin-top: 0; color: var(--secondary-dark);">Metodología Elegida: SCRUM (con Gestión Visual Scrumban)</h3>
+      <p style="margin-bottom: 0;">
+        Para el ciclo de desarrollo de <strong>SaveBite</strong>, el equipo seleccionó el marco de trabajo <strong>Scrum</strong>, optimizado con un tablero visual continuo de tareas inspirado en <strong>Kanban (Scrumban)</strong> para asegurar flujo constante y control de cuellos de botella.
+      </p>
+    </div>
+
+    <h3>Justificación de la Selección para el Proyecto</h3>
+    <ul class="custom-bullet-list">
+      <li><strong>Ciclos de retroalimentación alineados al calendario escolar:</strong> Al estructurar el trabajo en Sprints de 2 semanas, el equipo puede presentar incrementos funcionales (APKs ejecutables) a la docente en cada fecha de revisión parcial, validando oportunamente la arquitectura y la experiencia de usuario.</li>
+      <li><strong>Mitigación de riesgos en múltiples sensores móviles:</strong> SaveBite depende de la interacción simultánea entre GPS (Google Maps SDK), lector de cámara para QR y notificaciones push en segundo plano; Scrum permite probar y calibrar cada sensor en prototipos tempranos.</li>
+      <li><strong>Descomposición modular sin colisiones de código:</strong> Facilita repartir las tareas entre los 4 integrantes (Frontend UI Flutter, Integración de Mapas y Scanner, Backend en Firebase y Aseguramiento de Calidad QA).</li>
+    </ul>
+
+    <h3>Funcionamiento de la Metodología y Organización del Equipo</h3>
+    <div class="scrum-events-grid">
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Planning</div>
+        <div class="scrum-event-time">Cada 2 semanas (1 hr)</div>
+        <p class="scrum-event-desc">Selección de historias prioritarias del Product Backlog y definición del Sprint Goal.</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Daily Standup</div>
+        <div class="scrum-event-time">10-15 min diarios</div>
+        <p class="scrum-event-desc">Sincronización: ¿Qué hice ayer? ¿Qué haré hoy? ¿Qué bloqueos técnicos tengo?</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Review</div>
+        <div class="scrum-event-time">Fin de cada Sprint</div>
+        <p class="scrum-event-desc">Demostración en vivo del APK ejecutable a la docente y usuarios de prueba.</p>
+      </div>
+      <div class="scrum-event-card">
+        <div class="scrum-event-title">Sprint Retrospective</div>
+        <div class="scrum-event-time">Fin de cada Sprint</div>
+        <p class="scrum-event-desc">Análisis de aciertos, fallos y acuerdos de mejora continua para el siguiente ciclo.</p>
+      </div>
+    </div>
+
+    <h4>Herramientas de Colaboración y Gestión del Flujo</h4>
+    <ul class="custom-bullet-list">
+      <li><strong>Tablero Ágil Digital (Trello / GitHub Projects):</strong> Estructurado en 5 columnas con límites de trabajo en progreso (WIP): <em>1. Product Backlog</em> → <em>2. Sprint Backlog (To Do)</em> → <em>3. In Progress</em> → <em>4. Code Review & QA Testing</em> → <em>5. Done (Desplegado en APK)</em>.</li>
+      <li><strong>Control de Versiones y Flujo Git (GitHub):</strong> Implementación de estrategia <strong>GitFlow</strong>, protegiendo la rama <code>main</code> para versiones estables y utilizando ramas secundarias <code>develop</code> y <code>feature/nombre-modulo</code> con Pull Requests revisados antes de integrar cambios.</li>
+      <li><strong>Comunicación Continua:</strong> Canal dedicado en <em>Discord</em> y grupo de trabajo en <em>WhatsApp</em> para resolución inmediata de dudas de integración y alertas de compilación.</li>
+    </ul>
+
+    <!-- Planificación de Sprints -->
+    <h4>Plan de Trabajo por Sprints (Cronograma del Proyecto)</h4>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Sprint</th>
+          <th>Objetivo Principal (Sprint Goal)</th>
+          <th>Entregable Funcional (Incremento)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sprint 1</strong><br><small>Semanas 1-2</small></td>
+          <td>Configurar proyecto Flutter con Clean Architecture, Firebase Auth con roles (Usuario/Comercio) y mapas base con Google Maps SDK.</td>
+          <td>APK v0.1 con autenticación y visualización de mapa con geolocalización.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 2</strong><br><small>Semanas 3-4</small></td>
+          <td>Módulo de publicación de paquetes sorpresa por comercios y catálogo con filtros de distancia en tiempo real con Firestore.</td>
+          <td>APK v0.2 capaz de explorar ofertas activas en el mapa y consultar fichas.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 3</strong><br><small>Semanas 5-6</small></td>
+          <td>Lógica de reserva, generación de voucher QR, módulo de escaneo con cámara para comercios y persistencia offline con Hive.</td>
+          <td>APK v0.3 con ciclo completo de reserva y validación de canje con QR.</td>
+        </tr>
+        <tr>
+          <td><strong>Sprint 4</strong><br><small>Semanas 7-8</small></td>
+          <td>Notificaciones Push (FCM), calculadora de impacto ecológico (CO2 y dinero ahorrado), pruebas y release final.</td>
+          <td>Release Final APK v1.0, manual de usuario y documentación técnica.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 5: ROLES DENTRO DEL EQUIPO -->
+    <div class="section-header">
+      <div class="section-badge-num">5</div>
+      <h2>Roles dentro del Equipo</h2>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th style="width: 28%;">Integrante</th>
+          <th style="width: 22%;">Rol Asignado</th>
+          <th style="width: 50%;">Responsabilidades Principales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Alvaro Jesús Chávez Bazana</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-po">Product Owner (PO)</span><br>
+            <small style="font-weight: 600; color: #92400E;">Gestor de Requisitos & ODS</small>
+          </td>
+          <td>
+            • Definir la visión y propuesta de valor de SaveBite (modelo ODS de rescate de alimentos).<br>
+            • Crear, redactar y priorizar las historias de usuario en el Product Backlog.<br>
+            • Definir criterios de aceptación (DoD - Definition of Done).<br>
+            • Validar entregas con la docente y recopilar retroalimentación de panaderías y comercios locales.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Guillermo Yael Berlín Fomperosa</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-sm">Scrum Master</span><br>
+            <small style="font-weight: 600; color: #3730A3;">Facilitador Ágil & QA</small>
+          </td>
+          <td>
+            • Velar por la correcta aplicación de los principios y ceremonias de Scrum.<br>
+            • Facilitar sesiones de Sprint Planning, Daily Standup, Review y Retrospective.<br>
+            • Remover impedimentos técnicos u organizacionales que frenen al equipo.<br>
+            • Administrar el tablero en Trello/GitHub y coordinar pruebas de calidad en campo (QA).
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Juan Pablo Vega Uribe</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-dev">Lead Mobile Developer</span><br>
+            <small style="font-weight: 600; color: #115E59;">Frontend & UI/UX</small>
+          </td>
+          <td>
+            • Desarrollar interfaces fluidas en <strong>Flutter / Dart</strong> con Material Design 3.<br>
+            • Implementar el mapa interactivo con Google Maps SDK y navegación reactiva BLoC.<br>
+            • Integrar el controlador de cámara para lectura de códigos QR con baja latencia.<br>
+            • Diseñar el flujo de reserva y canje con un toque para garantizar máxima usabilidad.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Diego Sebastián Vilegas Enriquez</strong><br>
+            <small style="color: var(--text-muted);">Estudiante IDGS UTS</small>
+          </td>
+          <td>
+            <span class="role-badge role-backend">Backend & Data Architect</span><br>
+            <small style="font-weight: 600; color: #9D174D;">Cloud BaaS & Offline Cache</small>
+          </td>
+          <td>
+            • Diseñar el modelo de datos documental y consultas geoespaciales con <strong>Geohashing</strong> en Firestore.<br>
+            • Configurar autenticación, reglas de seguridad y control por roles (RBAC).<br>
+            • Desarrollar persistencia local Offline-First con <strong>Hive / SQLite</strong> para vouchers.<br>
+            • Integrar Notificaciones Push (FCM) y Cloud Functions para alertas de vencimiento.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 6: JUSTIFICACIÓN DE LA ARQUITECTURA PROPUESTA -->
+    <div class="section-header">
+      <div class="section-badge-num">6</div>
+      <h2>Justificación de la Arquitectura Propuesta</h2>
+    </div>
+
+    <div class="info-card purple">
+      <h3 style="margin-top: 0; color: #6B21A8;">¿Por qué es la arquitectura más adecuada para SaveBite?</h3>
+      <ul class="custom-bullet-list">
+        <li><strong>Separación estricta en 3 capas (Presentación, Dominio y Datos):</strong> La interfaz gráfica de Flutter (mapas, animaciones y vistas de usuario) se encuentra totalmente desacoplada de la base de datos y de las reglas de negocio. Esto permite cambiar o actualizar el proveedor de mapas sin tocar los algoritmos de reserva.</li>
+        <li><strong>Alta testabilidad en la Capa de Dominio:</strong> Los casos de uso (<em>ExplorarCercanosUseCase</em>, <em>ReservarPaqueteUseCase</em>, <em>CalcularImpactoODSUseCase</em>) son clases puras de Dart sin dependencias externas, lo que permite realizar pruebas unitarias automáticas en milisegundos sin requerir emuladores ni servidores activos.</li>
+        <li><strong>Estrategia Offline-First con Patrón Repositorio:</strong> Cuando un usuario acude a recoger su paquete al final del día, puede experimentar fallas de conectividad en la vía pública. El repositorio busca el voucher en la base de datos local (Hive), permitiendo desplegar el código QR sin conexión a internet y sincronizando el estado al recuperar señal.</li>
+        <li><strong>Aceleración del desarrollo mediante Cloud BaaS:</strong> El uso de Firebase permite resolver la autenticación, base de datos en tiempo real y notificaciones push sin programar servidores desde cero, concentrando el esfuerzo en la experiencia móvil.</li>
+      </ul>
+    </div>
+
+    <div class="tech-stack-row">
+      <div class="tech-chip tech-flutter"><span></span> <strong>Framework Móvil:</strong> Flutter 3.x (Dart)</div>
+      <div class="tech-chip tech-maps"><span></span> <strong>Mapas & GPS:</strong> Google Maps Platform SDK</div>
+      <div class="tech-chip tech-firebase"><span></span> <strong>Cloud BaaS:</strong> Firebase Firestore + Auth + FCM</div>
+      <div class="tech-chip tech-scanner"><span></span> <strong>Escaneo QR:</strong> Mobile Scanner (ML Kit)</div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- SECCIÓN 7: DIAGRAMA DE LA ARQUITECTURA Y FLUJO DE PANTALLAS -->
+    <div class="section-header">
+      <div class="section-badge-num">7</div>
+      <h2>Diagrama de la Arquitectura y Flujo de Pantallas</h2>
+    </div>
+
+    <h3>7.1 Diagrama de Navegación y Flujo de Pantallas (Screen Flow)</h3>
+    <div class="diagram-container">
+      <img src="diagram_flujo_pantallas_savebite.png" alt="Mapa de Navegación SaveBite" class="diagram-img">
+      <div class="diagram-caption">
+        <strong>Figura 1:</strong> Mapa de Navegación y Flujo de Pantallas de <em>SaveBite</em>. Muestra la autenticación centralizada y la derivación entre el modo consumidor (mapa GPS, reservas y voucher QR) y el modo comercio (publicación de lotes y escaneo de validación en mostrador).
+      </div>
+    </div>
+
+    <h4>Descripción de Transiciones y Navegación entre Pantallas:</h4>
+    <ul class="custom-bullet-list">
+      <li><strong>De Splash Screen (1) a Login (2):</strong> Validación automática de token de sesión en almacenamiento local. Si no existe sesión previa, conduce al formulario de acceso con selección de perfil (Consumidor o Comercio Aliado).</li>
+      <li><strong>De Login (2) a Dashboard (3A / 3B):</strong> Tras validar credenciales en Firebase Auth, el router redirige automáticamente al Mapa GPS y Feed de Ofertas (3A) si es consumidor, o al Panel del Establecimiento (3B) si es comercio.</li>
+      <li><strong>De Mapa GPS (3A) a Ficha de Paquete (4A) y Reserva (5A):</strong> Al pulsar sobre el pin de una panadería o cafetería, se despliega la tarjeta con el descuento aplicado y horario de recogida; al pulsar "Reservar", se concreta la compra.</li>
+      <li><strong>De Reserva (5A) a Voucher QR Dinámico (6A):</strong> Se genera la constancia digital con token QR encriptado y temporizador regresivo de recogida, almacenada en caché local para acceso offline.</li>
+      <li><strong>De Voucher QR (6A) a Escaneo en Mostrador (5B -> 6B):</strong> Al llegar al comercio, el comerciante abre el lector de cámara (5B), valida el código QR en menos de 2 segundos, finiquita la entrega (6B) y suma el impacto ecológico (7A).</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h3>7.2 Diagrama de Arquitectura de Software en Capas (Clean Architecture)</h3>
+    <div class="diagram-container">
+      <img src="diagram_arquitectura_capas_savebite.png" alt="Arquitectura Limpia SaveBite" class="diagram-img">
+      <div class="diagram-caption">
+        <strong>Figura 2:</strong> Arquitectura de Software en Capas de <em>SaveBite</em>. Demuestra la separación estricta entre la UI en Flutter con Google Maps, los Casos de Uso del Dominio (reserva, geolocalización, canje y métricas ODS) y la persistencia híbrida Offline-First con Firebase y Hive.
+      </div>
+    </div>
+
+    <h4>Componentes de la Arquitectura en Capas:</h4>
+    <ul class="custom-bullet-list">
+      <li><strong>1. Capa de Presentación (Frontend Flutter):</strong> Vistas reactivas, componentes Material 3, integración con Google Maps SDK, visor de enfoque de cámara (Mobile Scanner Overlay) y manejadores de estado BLoC.</li>
+      <li><strong>2. Capa de Dominio (Casos de Uso Puros):</strong> Lógica empresarial pura (<em>ExplorarCercanos</em>, <em>ReservarPaquete</em>, <em>ValidarEntregaQR</em>, <em>CalcularImpactoODS</em>) y entidades del modelo de negocio.</li>
+      <li><strong>3. Capa de Datos (Repository Pattern):</strong> Árbitro que conecta el almacenamiento local (Hive / SQLite) para vouchers sin internet y los servicios en la nube (Cloud Firestore con Geohashing, Auth, FCM y Storage).</li>
+    </ul>
+
+    <!-- CONCLUSIÓN / CIERRE DE FASE 1 -->
+    <div class="info-card teal" style="margin-top: 35px;">
+      <h3 style="margin-top: 0; color: #047857;">Conclusión de la Fase 1: Plan del Proceso de Desarrollo Móvil</h3>
+      <p style="margin-bottom: 0;">
+        Con la culminación de esta primera fase para <strong>SaveBite</strong>, el equipo de desarrollo de <strong>IDGS</strong> establece una propuesta de alto valor técnico y social. La articulación del marco ágil <strong>Scrum</strong>, la distribución de roles especializados entre sus cuatro integrantes (Alvaro, Guillermo, Juan Pablo y Diego) y una <strong>Clean Architecture con capacidades Offline-First y Geolocalización</strong> aseguran un desarrollo ordenado, sustentable y alineado a las expectativas de la asignatura <em>Desarrollo Móvil Integral</em>.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

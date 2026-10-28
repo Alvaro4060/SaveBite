@@ -1,0 +1,11 @@
+{
+    "name": "SaveBite - Cero Merma",
+    "short_name": "SaveBite",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0F4C81",
+    "theme_color": "#0F4C81",
+    "description": "Plataforma Móvil Colaborativa de Rescate de Alimentos UTS - ODS 12",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}
