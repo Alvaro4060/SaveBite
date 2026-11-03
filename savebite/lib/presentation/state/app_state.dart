@@ -5,9 +5,24 @@ import '../../domain/entities/reservation.dart';
 import '../../domain/entities/store.dart';
 import '../../domain/entities/eco_impact.dart';
 import '../../data/datasources/mock_data.dart';
+import '../../data/datasources/supabase_service.dart';
 export 'app_state_provider.dart';
 
 class AppState extends ChangeNotifier {
+  AppState() {
+    _initSupabaseListener();
+  }
+
+  void _initSupabaseListener() {
+    if (SupabaseService.instance.isReady) {
+      SupabaseService.instance.getPackagesStream().listen((realtimePackages) {
+        if (realtimePackages.isNotEmpty) {
+          _packages = realtimePackages;
+          notifyListeners();
+        }
+      });
+    }
+  }
   // Perfiles de demostración
   static const UserProfile consumerUser = UserProfile(
     id: 'user_01',
@@ -180,6 +195,9 @@ class AppState extends ChangeNotifier {
     );
 
     _packages.insert(0, newPkg);
+    if (SupabaseService.instance.isReady) {
+      SupabaseService.instance.insertPackage(newPkg);
+    }
     notifyListeners();
   }
 
@@ -193,6 +211,9 @@ class AppState extends ChangeNotifier {
       final res = _reservations[index];
       if (res.status == ReservationStatus.reserved) {
         _reservations[index] = res.copyWith(status: ReservationStatus.redeemed);
+        if (SupabaseService.instance.isReady) {
+          SupabaseService.instance.updateReservationStatus(token, ReservationStatus.redeemed);
+        }
         notifyListeners();
         return true;
       }

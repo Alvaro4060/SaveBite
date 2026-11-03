@@ -16,3 +16,8 @@ __pycache__/
 # Temp empty folders
 Nueva carpeta/
 
+
+# Binarios y paquetes compilados
+*.apk
+*.aab
+*.ipa

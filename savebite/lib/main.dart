@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'data/datasources/supabase_service.dart';
 import 'presentation/screens/splash/splash_screen.dart';
 import 'presentation/state/app_state.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseService.instance.initialize();
   runApp(const SaveBiteApp());
 }
 
