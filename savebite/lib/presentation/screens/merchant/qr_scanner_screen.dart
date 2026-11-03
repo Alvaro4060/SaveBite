@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
 import '../../state/app_state.dart';
@@ -14,6 +15,13 @@ class QrScannerScreen extends StatefulWidget {
 class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProviderStateMixin {
   late AnimationController _laserController;
   final TextEditingController _manualCodeController = TextEditingController();
+  final MobileScannerController _scannerController = MobileScannerController(
+    detectionSpeed: DetectionSpeed.normal,
+    facing: CameraFacing.back,
+    torchEnabled: false,
+  );
+
+  bool _isProcessingCode = false;
   bool _isTorchOn = false;
 
   @override
@@ -29,7 +37,21 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
   void dispose() {
     _laserController.dispose();
     _manualCodeController.dispose();
+    _scannerController.dispose();
     super.dispose();
+  }
+
+  void _onDetectBarcode(BarcodeCapture capture, AppState appState) {
+    if (_isProcessingCode) return;
+    final barcodes = capture.barcodes;
+    for (final barcode in barcodes) {
+      final rawValue = barcode.rawValue;
+      if (rawValue != null && rawValue.trim().isNotEmpty) {
+        _isProcessingCode = true;
+        _validateCode(rawValue.trim(), appState);
+        break;
+      }
+    }
   }
 
   void _validateCode(String token, AppState appState) {
@@ -60,7 +82,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.12),
+                color: AppColors.success.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 40),
@@ -69,7 +91,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             const Text('¡Entrega Validada con Éxito!', style: AppStyles.heading2),
             const SizedBox(height: 8),
             const Text(
-              'El código QR fue verificado en menos de 2 segundos. La transacción quedó registrada.',
+              'El código QR fue verificado y el canje quedó registrado en la base de datos.',
               textAlign: TextAlign.center,
               style: AppStyles.body,
             ),
@@ -85,9 +107,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                 children: [
                   const Icon(Icons.verified_rounded, size: 16, color: AppColors.greenDark),
                   const SizedBox(width: 8),
-                  Text(
-                    'Token: $token',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
+                  Flexible(
+                    child: Text(
+                      'Código: $token',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
@@ -96,22 +121,31 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             CustomButton(
               text: 'Aceptar y Volver al Escáner',
               backgroundColor: AppColors.primary,
-              onPressed: () => Navigator.of(ctx).pop(),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                setState(() => _isProcessingCode = false);
+              },
             ),
             const SizedBox(height: 10),
           ],
         ),
       ),
-    );
+    ).then((_) {
+      if (mounted) setState(() => _isProcessingCode = false);
+    });
   }
 
   void _showRedeemErrorDialog(String token) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: AppColors.error,
-        content: Text('Código inválido o ya canjeado anteriormente: $token'),
+        content: Text('Código inválido o ya canjeado: $token'),
+        duration: const Duration(seconds: 3),
       ),
     );
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _isProcessingCode = false);
+    });
   }
 
   void _showManualInputDialog(AppState appState) {
@@ -133,6 +167,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
           ElevatedButton(
             onPressed: () {
               Navigator.of(ctx).pop();
+              _isProcessingCode = true;
               _validateCode(_manualCodeController.text.trim(), appState);
             },
             child: const Text('Validar'),
@@ -153,25 +188,58 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: const Text(
-          'Lector de Mostrador (QR)',
+          'Lector de Mostrador (Cámara QR)',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
             icon: Icon(_isTorchOn ? Icons.flash_on : Icons.flash_off, color: Colors.white),
-            onPressed: () => setState(() => _isTorchOn = !_isTorchOn),
+            onPressed: () async {
+              await _scannerController.toggleTorch();
+              setState(() => _isTorchOn = !_isTorchOn);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.cameraswitch_outlined, color: Colors.white),
+            onPressed: () => _scannerController.switchCamera(),
           ),
         ],
       ),
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Visor de Cámara con Retícula y Láser
+          // Visor de Cámara Nativa
+          MobileScanner(
+            controller: _scannerController,
+            onDetect: (capture) => _onDetectBarcode(capture, appState),
+            errorBuilder: (context, error) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.videocam_off_outlined, color: Colors.white70, size: 48),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Cámara no disponible o sin permisos:\n${error.errorDetails?.message ?? error.toString()}',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // Máscara oscura alrededor de la zona de escaneo
           Center(
             child: Container(
-              width: 260,
-              height: 260,
+              width: 270,
+              height: 270,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Stack(
@@ -198,12 +266,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                     child: _CornerMarker(isTop: false, isLeft: false),
                   ),
 
-                  // Línea de Escaneo Láser Animada
+                  // Línea Láser Animada
                   AnimatedBuilder(
                     animation: _laserController,
                     builder: (context, child) {
                       return Positioned(
-                        top: _laserController.value * 240,
+                        top: _laserController.value * 250,
                         left: 10,
                         right: 10,
                         child: Container(
@@ -212,7 +280,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                             color: AppColors.secondary,
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.secondary.withOpacity(0.8),
+                                color: AppColors.secondary.withValues(alpha: 0.8),
                                 blurRadius: 8,
                                 spreadRadius: 2,
                               ),
@@ -227,17 +295,17 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             ),
           ),
 
-          // Texto de Instrucciones Superior
+          // Instrucción Superior
           Positioned(
-            top: 24,
+            top: 20,
             left: 20,
             right: 20,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: const Text(
                 'Apunta la cámara al voucher QR del cliente para validar la entrega en mostrador.',
@@ -247,20 +315,20 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             ),
           ),
 
-          // Botones Inferiores de Demostración
+          // Controles Inferiores (Simulador + Código Manual)
           Positioned(
-            bottom: 30,
+            bottom: 24,
             left: 20,
             right: 20,
             child: Column(
               children: [
-                // Simulación Rápida de Escaneo de Voucher Existente
                 if (pendingReservations.isNotEmpty)
                   CustomButton(
-                    text: 'Simular Escaneo: ${pendingReservations.first.id}',
+                    text: 'Probar con reserva activa: ${pendingReservations.first.id}',
                     icon: Icons.qr_code_scanner,
                     backgroundColor: AppColors.success,
                     onPressed: () {
+                      _isProcessingCode = true;
                       _validateCode(pendingReservations.first.qrToken, appState);
                     },
                   )
@@ -268,19 +336,18 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white12,
+                      color: Colors.black54,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'No hay reservas activas pendientes en la demo.\nReserva primero un paquete como consumidor.',
+                      'Cámara activa lista para leer cualquier QR de SaveBite.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
 
-                // Ingreso Manual de Código
                 OutlinedButton.icon(
                   onPressed: () => _showManualInputDialog(appState),
                   icon: const Icon(Icons.keyboard, color: Colors.white, size: 18),
