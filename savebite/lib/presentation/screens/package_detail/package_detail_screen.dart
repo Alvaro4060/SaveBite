@@ -235,30 +235,32 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Precio de rescate SaveBite:',
-                            style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            Formatters.formatCurrency(pkg.discountedPrice),
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.greenDark,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Precio SaveBite:',
+                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              Formatters.formatCurrency(pkg.discountedPrice),
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w900,
+                                color: AppColors.greenDark,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                             decoration: BoxDecoration(
                               gradient: AppColors.accentGradient,
                               borderRadius: BorderRadius.circular(16),
@@ -268,11 +270,11 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                               style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 5),
                           Text(
                             'Original: ${Formatters.formatCurrency(pkg.originalPrice)}',
                             style: const TextStyle(
-                              fontSize: 13,
+                              fontSize: 12.5,
                               decoration: TextDecoration.lineThrough,
                               color: AppColors.textMuted,
                             ),
@@ -294,12 +296,15 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                       children: [
                         const Icon(Icons.savings_rounded, color: AppColors.greenDark, size: 18),
                         const SizedBox(width: 8),
-                        Text(
-                          'Ahorras ${Formatters.formatCurrency(savings)} rescatando comida fresca',
-                          style: const TextStyle(
-                            color: AppColors.greenDark,
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Text(
+                            'Ahorras ${Formatters.formatCurrency(savings)} rescatando comida fresca',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColors.greenDark,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
