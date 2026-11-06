@@ -30,15 +30,20 @@ class CustomButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (icon != null) ...[
-          Icon(icon, size: 20, color: isOutlined ? backgroundColor : textColor),
-          const SizedBox(width: 8),
+          Icon(icon, size: 18, color: isOutlined ? backgroundColor : textColor),
+          const SizedBox(width: 6),
         ],
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: isOutlined ? backgroundColor : textColor,
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: isOutlined ? backgroundColor : textColor,
+            ),
           ),
         ),
       ],
@@ -51,6 +56,7 @@ class CustomButton extends StatelessWidget {
         child: OutlinedButton(
           onPressed: onPressed,
           style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             side: BorderSide(color: backgroundColor, width: 1.8),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -67,6 +73,7 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           backgroundColor: backgroundColor,
           foregroundColor: textColor,
           elevation: 2,

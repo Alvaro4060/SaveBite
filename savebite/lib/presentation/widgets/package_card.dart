@@ -117,15 +117,19 @@ class PackageCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.access_time_rounded, size: 16, color: AppColors.accent),
                     const SizedBox(width: 6),
-                    Text(
-                      'Recoger hoy: ${package.pickupTimeWindow}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.accentHover,
+                    Expanded(
+                      child: Text(
+                        'Recoger hoy: ${package.pickupTimeWindow}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.accentHover,
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
@@ -166,15 +170,16 @@ class PackageCard extends StatelessWidget {
 
                 // Fila Inferior: Precios y Botón
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           Formatters.formatCurrency(package.originalPrice),
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             decoration: TextDecoration.lineThrough,
                             color: AppColors.textMuted,
                             fontWeight: FontWeight.w500,
@@ -183,48 +188,55 @@ class PackageCard extends StatelessWidget {
                         Text(
                           Formatters.formatCurrency(package.discountedPrice),
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w900,
                             color: AppColors.greenDark,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     // Pill Impacto CO2
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.eco_rounded, size: 14, color: AppColors.success),
-                          const SizedBox(width: 4),
-                          Text(
-                            '-${package.co2SavedKg} kg CO₂',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.greenDark,
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.eco_rounded, size: 13, color: AppColors.success),
+                            const SizedBox(width: 3),
+                            Flexible(
+                              child: Text(
+                                '-${package.co2SavedKg} kg CO₂',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.greenDark,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
                         'Ver Detalle',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

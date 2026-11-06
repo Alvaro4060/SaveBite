@@ -93,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.shopping_bag_outlined,
                           size: 64,
                           color: AppColors.primary,

@@ -207,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Expanded(
                     child: CustomButton(
-                      text: 'Demo Consumidor',
+                      text: 'Consumidor',
                       isOutlined: true,
                       height: 44,
                       icon: Icons.person_outline,
@@ -221,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomButton(
-                      text: 'Demo Comercio',
+                      text: 'Comercio',
                       isOutlined: true,
                       height: 44,
                       icon: Icons.storefront_outlined,
