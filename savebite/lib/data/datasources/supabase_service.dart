@@ -68,6 +68,8 @@ class SupabaseService {
     required String name,
     required UserRole role,
     String? storeName,
+    String? storeCategory,
+    String? storeAddress,
   }) async {
     if (!isReady) return null;
     try {
@@ -79,11 +81,33 @@ class SupabaseService {
       final user = response.user;
       if (user == null) return null;
 
+      String? storeId;
+      if (role == UserRole.merchant && storeName != null && storeName.isNotEmpty) {
+        try {
+          final storeData = await client.from('stores').insert({
+            'name': storeName,
+            'category': storeCategory ?? 'Panadería',
+            'address': storeAddress ?? 'Salamanca, Gto.',
+            'latitude': 20.5721,
+            'longitude': -101.1983,
+            'rating': 5.0,
+            'icon_emoji': '🏪',
+            'owner_id': user.id,
+          }).select().maybeSingle();
+          if (storeData != null) {
+            storeId = storeData['id']?.toString();
+          }
+        } catch (storeErr) {
+          debugPrint('[SupabaseService] Nota al registrar tienda: $storeErr');
+        }
+      }
+
       await client.from('profiles').upsert({
         'id': user.id,
         'name': name,
         'email': email,
         'role': role == UserRole.merchant ? 'merchant' : 'consumer',
+        if (storeId != null) 'store_id': storeId,
         'store_name': storeName,
         'avatar_initials': name.trim().split(' ').map((p) => p.isNotEmpty ? p[0] : '').take(2).join().toUpperCase(),
       });
@@ -93,6 +117,7 @@ class SupabaseService {
         name: name,
         email: email,
         role: role,
+        storeId: storeId,
         storeName: storeName,
         avatarInitials: name.trim().split(' ').map((p) => p.isNotEmpty ? p[0] : '').take(2).join().toUpperCase(),
       );

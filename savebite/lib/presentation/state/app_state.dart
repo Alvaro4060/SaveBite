@@ -113,6 +113,57 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCurrentUser(UserProfile user) {
+    _currentUser = user;
+    _currentTabIndex = 0;
+    notifyListeners();
+  }
+
+  Future<bool> signUp({
+    required String name,
+    required String email,
+    required String password,
+    required UserRole role,
+    String? storeName,
+    String? storeCategory,
+    String? storeAddress,
+  }) async {
+    UserProfile? registeredUser;
+
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      try {
+        registeredUser = await SupabaseService.instance.signUp(
+          email: email,
+          password: password,
+          name: name,
+          role: role,
+          storeName: storeName,
+          storeCategory: storeCategory,
+          storeAddress: storeAddress,
+        );
+      } catch (e) {
+        debugPrint('[AppState] Error registrando en Supabase: $e');
+      }
+    }
+
+    final initials = name.trim().split(' ').map((p) => p.isNotEmpty ? p[0] : '').take(2).join().toUpperCase();
+    final user = registeredUser ??
+        UserProfile(
+          id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+          name: name,
+          email: email,
+          role: role,
+          storeId: role == UserRole.merchant ? 'store_${DateTime.now().millisecondsSinceEpoch}' : null,
+          storeName: storeName ?? (role == UserRole.merchant ? 'Mi Comercio' : null),
+          avatarInitials: initials.isNotEmpty ? initials : (role == UserRole.merchant ? 'MC' : 'SB'),
+        );
+
+    _currentUser = user;
+    _currentTabIndex = 0;
+    notifyListeners();
+    return true;
+  }
+
   void setCategory(String category) {
     _selectedCategory = category;
     notifyListeners();

@@ -6,6 +6,7 @@ import '../../../domain/entities/user_profile.dart';
 import '../../state/app_state.dart';
 import '../../widgets/custom_button.dart';
 import '../main_shell_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -190,6 +191,37 @@ class _LoginScreenState extends State<LoginScreen> {
                 backgroundColor: AppColors.primary,
                 icon: Icons.arrow_forward_rounded,
                 onPressed: () => _submitLogin(appState),
+              ),
+
+              const SizedBox(height: 14),
+
+              // Apartado para Crear Cuenta / Sign Up
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    '¿No tienes cuenta aún? ',
+                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => RegisterScreen(initialRole: _selectedRole),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Regístrate aquí',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 16),
