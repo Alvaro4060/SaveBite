@@ -87,9 +87,14 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Código de Canje:', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                      Text(
-                        reservation.id,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          reservation.id,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary),
+                        ),
                       ),
                     ],
                   ),
@@ -98,9 +103,14 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Ventana de Recogida:', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-                      Text(
-                        reservation.pickupWindow,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.accentHover),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          reservation.pickupWindow,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.accentHover),
+                        ),
                       ),
                     ],
                   ),

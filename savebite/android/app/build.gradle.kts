@@ -47,3 +47,7 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+tasks.matching { it.name.startsWith("cleanMerge") }.configureEach {
+    enabled = false
+}

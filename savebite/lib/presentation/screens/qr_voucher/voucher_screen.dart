@@ -34,7 +34,7 @@ class VoucherScreen extends StatelessWidget {
           children: [
             // Indicador Offline-First
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
                 color: AppColors.success.withOpacity(0.1),
@@ -44,14 +44,18 @@ class VoucherScreen extends StatelessWidget {
               child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.offline_pin_rounded, color: AppColors.greenDark, size: 18),
-                  SizedBox(width: 8),
-                  Text(
-                    'Guardado localmente (Funciona sin internet)',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.greenDark,
+                  Icon(Icons.offline_pin_rounded, color: AppColors.greenDark, size: 17),
+                  SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      'Disponible sin conexión (Offline)',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.greenDark,
+                      ),
                     ),
                   ),
                 ],

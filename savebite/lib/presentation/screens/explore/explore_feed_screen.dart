@@ -165,21 +165,26 @@ class _ExploreFeedScreenState extends State<ExploreFeedScreen> {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Row(
                               children: [
-                                Text(
-                                  '${packages.length} paquetes sorpresa hoy',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textSecondary,
+                                Expanded(
+                                  child: Text(
+                                    '${packages.length} paquetes sorpresa hoy',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.textSecondary,
+                                    ),
                                   ),
                                 ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 const Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(Icons.bolt, size: 14, color: AppColors.accent),
                                     SizedBox(width: 2),
                                     Text(
-                                      'Actualizado en vivo',
+                                      'En vivo',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w700,

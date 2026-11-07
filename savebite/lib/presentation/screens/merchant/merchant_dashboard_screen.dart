@@ -162,10 +162,25 @@ class MerchantDashboardScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Tus Paquetes Publicados Hoy', style: AppStyles.heading3),
-              Text(
-                '${merchantPackages.length} activos',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+              const Expanded(
+                child: Text(
+                  'Tus Paquetes de Hoy',
+                  style: AppStyles.heading3,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceMuted,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '${merchantPackages.length} activos',
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                ),
               ),
             ],
           ),
