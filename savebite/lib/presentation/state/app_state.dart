@@ -119,6 +119,20 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateProfileName(String newName) {
+    final initials = newName.trim().split(' ').map((p) => p.isNotEmpty ? p[0] : '').take(2).join().toUpperCase();
+    _currentUser = UserProfile(
+      id: _currentUser.id,
+      name: newName,
+      email: _currentUser.email,
+      role: _currentUser.role,
+      storeId: _currentUser.storeId,
+      storeName: _currentUser.storeName,
+      avatarInitials: initials.isNotEmpty ? initials : _currentUser.avatarInitials,
+    );
+    notifyListeners();
+  }
+
   Future<bool> signUp({
     required String name,
     required String email,

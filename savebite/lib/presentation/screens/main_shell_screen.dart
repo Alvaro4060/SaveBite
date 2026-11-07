@@ -9,6 +9,7 @@ import 'impact/impact_calculator_screen.dart';
 import 'merchant/merchant_dashboard_screen.dart';
 import 'merchant/qr_scanner_screen.dart';
 import 'merchant/create_package_screen.dart';
+import 'profile/profile_screen.dart';
 import 'auth/login_screen.dart';
 
 class MainShellScreen extends StatelessWidget {
@@ -24,12 +25,14 @@ class MainShellScreen extends StatelessWidget {
       const ExploreFeedScreen(),
       const ReservationsScreen(),
       const ImpactCalculatorScreen(),
+      const ProfileScreen(),
     ];
 
     final List<Widget> merchantScreens = [
       const MerchantDashboardScreen(),
       const QrScannerScreen(),
       const CreatePackageScreen(),
+      const ProfileScreen(),
     ];
 
     final activeScreens = isMerchant ? merchantScreens : consumerScreens;
@@ -131,7 +134,9 @@ class MainShellScreen extends StatelessWidget {
               ),
             ),
             onSelected: (value) {
-              if (value == 'switch_role') {
+              if (value == 'view_profile') {
+                appState.setTabIndex(3);
+              } else if (value == 'switch_role') {
                 appState.switchRole(
                   isMerchant ? UserRole.consumer : UserRole.merchant,
                 );
@@ -144,6 +149,28 @@ class MainShellScreen extends StatelessWidget {
               }
             },
             itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'view_profile',
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.account_circle_outlined,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Mi Perfil (${appState.currentUser.name})',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
               PopupMenuItem(
                 value: 'switch_role',
                 child: Row(
@@ -231,8 +258,11 @@ class MainShellScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: (index) => appState.setTabIndex(index),
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: isMerchant ? AppColors.accentHover : AppColors.primary,
         unselectedItemColor: AppColors.textMuted,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
         items: isMerchant
             ? const [
                 BottomNavigationBarItem(
@@ -248,7 +278,12 @@ class MainShellScreen extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add_circle_outline_rounded),
                   activeIcon: Icon(Icons.add_circle_rounded),
-                  label: 'Publicar Pack',
+                  label: 'Publicar',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Mi Perfil',
                 ),
               ]
             : [
@@ -270,6 +305,11 @@ class MainShellScreen extends StatelessWidget {
                   icon: Icon(Icons.eco_outlined),
                   activeIcon: Icon(Icons.eco_rounded),
                   label: AppStrings.navImpact,
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Mi Perfil',
                 ),
               ],
       ),
