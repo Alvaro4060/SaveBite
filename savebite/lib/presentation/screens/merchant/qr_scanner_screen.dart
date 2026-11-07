@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_styles.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../domain/entities/redeem_result.dart';
 import '../../state/app_state.dart';
 import '../../widgets/custom_button.dart';
 
@@ -54,17 +56,21 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
     }
   }
 
-  void _validateCode(String token, AppState appState) {
-    final success = appState.redeemQrToken(token);
+  void _validateCode(String token, AppState appState) async {
+    final result = await appState.redeemQrToken(token);
 
-    if (success) {
-      _showRedeemSuccessDialog(token);
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      _showRedeemSuccessDialog(result);
+    } else if (result.isAlreadyRedeemed) {
+      _showAlreadyRedeemedDialog(result);
     } else {
-      _showRedeemErrorDialog(token);
+      _showRedeemErrorDialog(result.message);
     }
   }
 
-  void _showRedeemSuccessDialog(String token) {
+  void _showRedeemSuccessDialog(RedeemResult result) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -90,11 +96,20 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             const SizedBox(height: 16),
             const Text('¡Entrega Validada con Éxito!', style: AppStyles.heading2),
             const SizedBox(height: 8),
-            const Text(
-              'El código QR fue verificado y el canje quedó registrado en la base de datos.',
+            Text(
+              result.packageTitle != null
+                  ? 'Paquete: ${result.packageTitle}'
+                  : 'El código QR fue verificado y el canje quedó registrado en Supabase.',
               textAlign: TextAlign.center,
-              style: AppStyles.body,
+              style: AppStyles.body.copyWith(fontWeight: FontWeight.w600),
             ),
+            if (result.amountPaid != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Cobrado / Pagado: ${Formatters.formatCurrency(result.amountPaid!)}',
+                style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+              ),
+            ],
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -109,7 +124,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
-                      'Código: $token',
+                      'Cupón: ${result.token}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -135,11 +150,73 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
     });
   }
 
-  void _showRedeemErrorDialog(String token) {
+  void _showAlreadyRedeemedDialog(RedeemResult result) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 40),
+            ),
+            const SizedBox(height: 16),
+            const Text('Cupón Ya Canjeado', style: AppStyles.heading2),
+            const SizedBox(height: 8),
+            Text(
+              'Este paquete (${result.packageTitle ?? 'reserva'}) ya fue entregado y canjeado previamente.',
+              textAlign: TextAlign.center,
+              style: AppStyles.body,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                'Código: ${result.token}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.accentHover),
+              ),
+            ),
+            const SizedBox(height: 20),
+            CustomButton(
+              text: 'Cerrar',
+              backgroundColor: AppColors.warning,
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                setState(() => _isProcessingCode = false);
+              },
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    ).then((_) {
+      if (mounted) setState(() => _isProcessingCode = false);
+    });
+  }
+
+  void _showRedeemErrorDialog(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: AppColors.error,
-        content: Text('Código inválido o ya canjeado: $token'),
+        content: Text(message),
         duration: const Duration(seconds: 3),
       ),
     );

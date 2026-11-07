@@ -4,6 +4,7 @@ import '../../core/constants/supabase_constants.dart';
 import '../../domain/entities/food_package.dart';
 import '../../domain/entities/reservation.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../domain/entities/redeem_result.dart';
 
 class SupabaseService {
   static final SupabaseService instance = SupabaseService._internal();
@@ -169,8 +170,172 @@ class SupabaseService {
   }
 
   // ==========================================
-  // CANJE Y RESERVAS
+  // CANJE Y RESERVAS EN TIEMPO REAL
   // ==========================================
+  Future<Reservation?> createReservation({
+    required FoodPackage package,
+    String? userId,
+  }) async {
+    if (!isReady) return null;
+
+    final reservationId = 'RES-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-SB';
+    final qrToken = 'SB-TOKEN-${package.id.substring(0, package.id.length > 8 ? 8 : package.id.length)}-${DateTime.now().millisecondsSinceEpoch}';
+
+    try {
+      // 1. Descontar stock atómicamente en la base de datos
+      if (package.remainingStock > 0) {
+        await client.from('food_packages').update({
+          'remaining_stock': package.remainingStock - 1,
+        }).eq('id', package.id);
+      }
+
+      // 2. Insertar reserva en la tabla de Supabase
+      final insertData = <String, dynamic>{
+        'package_id': package.id,
+        'package_title': package.title,
+        'store_name': package.storeName,
+        'pickup_window': package.pickupTimeWindow,
+        'amount_paid': package.discountedPrice,
+        'original_price': package.originalPrice,
+        'qr_token': qrToken,
+        'status': 'reserved',
+        'co2_saved_kg': package.co2SavedKg,
+        'food_rescued_kg': package.estimatedKg,
+      };
+
+      // Si el userId es un UUID válido de Supabase, lo incluimos
+      if (userId != null && userId.contains('-') && userId.length >= 32) {
+        insertData['user_id'] = userId;
+      }
+
+      final resList = await client.from('reservations').insert(insertData).select();
+      final row = resList.isNotEmpty ? resList.first : null;
+      final actualId = row != null && row['id'] != null ? row['id'].toString() : reservationId;
+
+      return Reservation(
+        id: actualId,
+        packageId: package.id,
+        packageTitle: package.title,
+        storeName: package.storeName,
+        pickupWindow: package.pickupTimeWindow,
+        amountPaid: package.discountedPrice,
+        originalPrice: package.originalPrice,
+        reservedAt: DateTime.now(),
+        qrToken: qrToken,
+        status: ReservationStatus.reserved,
+        co2SavedKg: package.co2SavedKg,
+        foodRescuedKg: package.estimatedKg,
+        isOfflineCached: true,
+      );
+    } catch (e) {
+      debugPrint('[SupabaseService] Error creando reserva en Supabase: $e');
+      return null;
+    }
+  }
+
+  Future<RedeemResult> redeemVoucher(String token) async {
+    if (!isReady) {
+      return RedeemResult(
+        status: RedeemStatus.networkError,
+        message: 'Sin conexión a Supabase. Se utilizará verificación local.',
+        token: token,
+      );
+    }
+
+    try {
+      // Buscar la reserva por qr_token o por id
+      final response = await client
+          .from('reservations')
+          .select()
+          .or('qr_token.eq.$token,id.eq.$token')
+          .maybeSingle();
+
+      if (response == null) {
+        return RedeemResult(
+          status: RedeemStatus.notFound,
+          message: 'El código escaneado no corresponde a ninguna reserva de SaveBite.',
+          token: token,
+        );
+      }
+
+      final statusStr = response['status'] as String? ?? 'reserved';
+      final packageTitle = response['package_title'] as String? ?? 'Paquete Sorpresa';
+      final storeName = response['store_name'] as String? ?? 'Comercio Aliado';
+      final amountPaid = (response['amount_paid'] as num?)?.toDouble() ?? 0.0;
+
+      if (statusStr == 'redeemed') {
+        final redeemedAtStr = response['redeemed_at'] as String?;
+        final redeemedDate = redeemedAtStr != null ? DateTime.tryParse(redeemedAtStr) : null;
+        return RedeemResult(
+          status: RedeemStatus.alreadyRedeemed,
+          message: 'Este código QR ya fue canjeado con anterioridad.',
+          token: token,
+          packageTitle: packageTitle,
+          storeName: storeName,
+          amountPaid: amountPaid,
+          redeemedAt: redeemedDate,
+        );
+      }
+
+      // Marcar como canjeado en tiempo real
+      final now = DateTime.now();
+      await client.from('reservations').update({
+        'status': 'redeemed',
+        'redeemed_at': now.toIso8601String(),
+      }).eq('id', response['id']);
+
+      return RedeemResult(
+        status: RedeemStatus.success,
+        message: '¡Entrega validada y canjeada con éxito en mostrador!',
+        token: token,
+        packageTitle: packageTitle,
+        storeName: storeName,
+        amountPaid: amountPaid,
+        redeemedAt: now,
+      );
+    } catch (e) {
+      debugPrint('[SupabaseService] Error validando QR: $e');
+      return RedeemResult(
+        status: RedeemStatus.networkError,
+        message: 'Error de comunicación con el servidor: $e',
+        token: token,
+      );
+    }
+  }
+
+  Stream<List<Reservation>> getReservationsStream() {
+    if (!isReady) return const Stream.empty();
+
+    return client
+        .from('reservations')
+        .stream(primaryKey: ['id'])
+        .order('reserved_at', ascending: false)
+        .map((rows) {
+          return rows.map((row) {
+            final statusStr = row['status'] as String? ?? 'reserved';
+            final status = statusStr == 'redeemed'
+                ? ReservationStatus.redeemed
+                : (statusStr == 'expired' ? ReservationStatus.expired : ReservationStatus.reserved);
+
+            return Reservation(
+              id: row['id'].toString(),
+              packageId: row['package_id'].toString(),
+              packageTitle: (row['package_title'] ?? 'Paquete') as String,
+              storeName: (row['store_name'] ?? 'Comercio') as String,
+              pickupWindow: (row['pickup_window'] ?? '') as String,
+              amountPaid: (row['amount_paid'] as num?)?.toDouble() ?? 0.0,
+              originalPrice: (row['original_price'] as num?)?.toDouble() ?? 0.0,
+              reservedAt: DateTime.tryParse(row['reserved_at'] as String? ?? '') ?? DateTime.now(),
+              qrToken: (row['qr_token'] ?? '') as String,
+              status: status,
+              co2SavedKg: (row['co2_saved_kg'] as num?)?.toDouble() ?? 0.0,
+              foodRescuedKg: (row['food_rescued_kg'] as num?)?.toDouble() ?? 0.0,
+              isOfflineCached: true,
+            );
+          }).toList();
+        });
+  }
+
   Future<void> updateReservationStatus(String qrToken, ReservationStatus newStatus) async {
     if (!isReady) return;
     try {

@@ -4,6 +4,7 @@ import '../../domain/entities/food_package.dart';
 import '../../domain/entities/reservation.dart';
 import '../../domain/entities/store.dart';
 import '../../domain/entities/eco_impact.dart';
+import '../../domain/entities/redeem_result.dart';
 import '../../data/datasources/mock_data.dart';
 import '../../data/datasources/supabase_service.dart';
 export 'app_state_provider.dart';
@@ -18,6 +19,13 @@ class AppState extends ChangeNotifier {
       SupabaseService.instance.getPackagesStream().listen((realtimePackages) {
         if (realtimePackages.isNotEmpty) {
           _packages = realtimePackages;
+          notifyListeners();
+        }
+      });
+
+      SupabaseService.instance.getReservationsStream().listen((realtimeReservations) {
+        if (realtimeReservations.isNotEmpty) {
+          _reservations = realtimeReservations;
           notifyListeners();
         }
       });
@@ -120,28 +128,40 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Realiza la reserva in-app de un paquete sorpresa
-  Reservation reservePackage(FoodPackage package) {
-    final newReservationId = 'RES-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-SB';
-    final qrToken = 'SB-TOKEN-${package.id}-${DateTime.now().millisecondsSinceEpoch}';
+  /// Realiza la reserva in-app de un paquete sorpresa (híbrido Supabase + local)
+  Future<Reservation> reservePackage(FoodPackage package) async {
+    Reservation? supabaseReservation;
 
-    final reservation = Reservation(
-      id: newReservationId,
-      packageId: package.id,
-      packageTitle: package.title,
-      storeName: package.storeName,
-      pickupWindow: package.pickupTimeWindow,
-      amountPaid: package.discountedPrice,
-      originalPrice: package.originalPrice,
-      reservedAt: DateTime.now(),
-      qrToken: qrToken,
-      status: ReservationStatus.reserved,
-      co2SavedKg: package.co2SavedKg,
-      foodRescuedKg: package.estimatedKg,
-      isOfflineCached: true,
-    );
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      supabaseReservation = await SupabaseService.instance.createReservation(
+        package: package,
+        userId: _currentUser.id,
+      );
+    }
 
-    // Reducir stock del paquete
+    final newReservationId = supabaseReservation?.id ??
+        'RES-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-SB';
+    final qrToken = supabaseReservation?.qrToken ??
+        'SB-TOKEN-${package.id.substring(0, package.id.length > 8 ? 8 : package.id.length)}-${DateTime.now().millisecondsSinceEpoch}';
+
+    final reservation = supabaseReservation ??
+        Reservation(
+          id: newReservationId,
+          packageId: package.id,
+          packageTitle: package.title,
+          storeName: package.storeName,
+          pickupWindow: package.pickupTimeWindow,
+          amountPaid: package.discountedPrice,
+          originalPrice: package.originalPrice,
+          reservedAt: DateTime.now(),
+          qrToken: qrToken,
+          status: ReservationStatus.reserved,
+          co2SavedKg: package.co2SavedKg,
+          foodRescuedKg: package.estimatedKg,
+          isOfflineCached: true,
+        );
+
+    // Reducir stock del paquete en memoria local
     final index = _packages.indexWhere((p) => p.id == package.id);
     if (index != -1 && _packages[index].remainingStock > 0) {
       final updatedPkg = _packages[index].copyWith(
@@ -150,7 +170,9 @@ class AppState extends ChangeNotifier {
       _packages[index] = updatedPkg;
     }
 
-    _reservations.insert(0, reservation);
+    if (_reservations.every((r) => r.id != reservation.id && r.qrToken != reservation.qrToken)) {
+      _reservations.insert(0, reservation);
+    }
 
     // Actualizar impacto estimado
     _ecoImpact = EcoImpact(
@@ -201,8 +223,26 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Canjear y validar entrega mediante escáner QR en mostrador
-  bool redeemQrToken(String token) {
+  /// Canjear y validar entrega mediante escáner QR en mostrador (Supabase + fallback)
+  Future<RedeemResult> redeemQrToken(String token) async {
+    // 1. Intentar validar directamente contra Supabase
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      final remoteResult = await SupabaseService.instance.redeemVoucher(token);
+      if (remoteResult.isSuccess || remoteResult.isAlreadyRedeemed) {
+        final localIdx = _reservations.indexWhere(
+          (r) => r.qrToken == token || r.id == token,
+        );
+        if (localIdx != -1) {
+          _reservations[localIdx] = _reservations[localIdx].copyWith(
+            status: ReservationStatus.redeemed,
+          );
+        }
+        notifyListeners();
+        return remoteResult;
+      }
+    }
+
+    // 2. Fallback de verificación local en memoria/caché
     final index = _reservations.indexWhere(
       (r) => r.qrToken == token || r.id == token,
     );
@@ -215,9 +255,31 @@ class AppState extends ChangeNotifier {
           SupabaseService.instance.updateReservationStatus(token, ReservationStatus.redeemed);
         }
         notifyListeners();
-        return true;
+        return RedeemResult(
+          status: RedeemStatus.success,
+          message: '¡Entrega validada y canjeada con éxito en mostrador!',
+          token: token,
+          packageTitle: res.packageTitle,
+          storeName: res.storeName,
+          amountPaid: res.amountPaid,
+          redeemedAt: DateTime.now(),
+        );
+      } else if (res.status == ReservationStatus.redeemed) {
+        return RedeemResult(
+          status: RedeemStatus.alreadyRedeemed,
+          message: 'Este código QR ya fue canjeado con anterioridad.',
+          token: token,
+          packageTitle: res.packageTitle,
+          storeName: res.storeName,
+          amountPaid: res.amountPaid,
+        );
       }
     }
-    return false;
+
+    return RedeemResult(
+      status: RedeemStatus.notFound,
+      message: 'Código no encontrado o no pertenece a SaveBite: $token',
+      token: token,
+    );
   }
 }

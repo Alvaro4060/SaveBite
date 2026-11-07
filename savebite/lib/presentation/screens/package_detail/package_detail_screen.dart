@@ -21,18 +21,25 @@ class PackageDetailScreen extends StatefulWidget {
 class _PackageDetailScreenState extends State<PackageDetailScreen> {
   bool _isReserving = false;
 
-  void _onReserve(BuildContext context) {
+  void _onReserve(BuildContext context) async {
     setState(() => _isReserving = true);
-
     final appState = AppStateProvider.of(context);
 
-    Future.delayed(const Duration(milliseconds: 600), () {
+    try {
+      final reservation = await appState.reservePackage(widget.package);
       if (!mounted) return;
-      final reservation = appState.reservePackage(widget.package);
       setState(() => _isReserving = false);
-
       _showSuccessDialog(context, reservation);
-    });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isReserving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.error,
+          content: Text('No fue posible completar la reserva: $e'),
+        ),
+      );
+    }
   }
 
   void _showSuccessDialog(BuildContext context, Reservation reservation) {

@@ -3,28 +3,27 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:savebite/core/constants/supabase_constants.dart';
 
 void main() {
-  test('Verificar conexión y lectura de datos desde Supabase', () async {
+  test('Verificar lectura de paquetes y tiendas en Supabase', () async {
     final client = SupabaseClient(
       SupabaseConstants.supabaseUrl,
       SupabaseConstants.supabaseAnonKey,
     );
 
-    // Consultar tiendas
+    // 1. Consultar tiendas
     final stores = await client.from('stores').select();
-    print(' Tiendas encontradas en Supabase: ${stores.length}');
-    for (final s in stores) {
-      print('   -> ${s['name']} (${s['category']}) - ${s['address']}');
-    }
-
-    // Consultar paquetes sorpresa
-    final packages = await client.from('food_packages').select();
-    print(' Paquetes sorpresa encontrados en Supabase: ${packages.length}');
-    for (final p in packages) {
-      print('   -> ${p['title']} en ${p['store_name']} [\$${p['discounted_price']} MXN]');
-    }
-
+    print('🏪 Tiendas en Supabase: ${stores.length}');
     expect(stores.isNotEmpty, true);
+
+    // 2. Consultar paquetes
+    final packages = await client.from('food_packages').select();
+    print('📦 Paquetes en Supabase: ${packages.length}');
     expect(packages.isNotEmpty, true);
+
+    // 3. Consultar reservas existentes
+    final reservations = await client.from('reservations').select();
+    print('🎫 Reservas en Supabase: ${reservations.length}');
   });
 }
+
+
 
