@@ -25,14 +25,12 @@ class MainShellScreen extends StatelessWidget {
       const ExploreFeedScreen(),
       const ReservationsScreen(),
       const ImpactCalculatorScreen(),
-      const ProfileScreen(),
     ];
 
     final List<Widget> merchantScreens = [
       const MerchantDashboardScreen(),
       const QrScannerScreen(),
       const CreatePackageScreen(),
-      const ProfileScreen(),
     ];
 
     final activeScreens = isMerchant ? merchantScreens : consumerScreens;
@@ -107,35 +105,62 @@ class MainShellScreen extends StatelessWidget {
           ],
         ),
         actions: [
-          // Switch rápido de Perfil / Rol (Ideal para pruebas en vivo)
+          // Menú Desplegable de Usuario Estilizado
           PopupMenuButton<String>(
-            tooltip: 'Cambiar Perfil / Modo',
+            tooltip: 'Menú de Usuario',
+            elevation: 12,
+            shadowColor: Colors.black38,
+            color: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+            ),
+            offset: const Offset(0, 48),
+            constraints: const BoxConstraints(minWidth: 265, maxWidth: 300),
             icon: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               decoration: BoxDecoration(
-                color: AppColors.surfaceMuted,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.border),
+                color: isMerchant
+                    ? AppColors.accent.withOpacity(0.12)
+                    : AppColors.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isMerchant
+                      ? AppColors.accent.withOpacity(0.35)
+                      : AppColors.primary.withOpacity(0.25),
+                  width: 1.2,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircleAvatar(
-                    radius: 11,
+                    radius: 12,
                     backgroundColor: isMerchant ? AppColors.accent : AppColors.primary,
                     child: Text(
                       appState.currentUser.avatarInitials,
-                      style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Icon(Icons.arrow_drop_down, size: 18, color: AppColors.textSecondary),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 18,
+                    color: isMerchant ? AppColors.accentHover : AppColors.primary,
+                  ),
                 ],
               ),
             ),
             onSelected: (value) {
               if (value == 'view_profile') {
-                appState.setTabIndex(3);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
               } else if (value == 'switch_role') {
                 appState.switchRole(
                   isMerchant ? UserRole.consumer : UserRole.merchant,
@@ -149,72 +174,206 @@ class MainShellScreen extends StatelessWidget {
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
+              // 1. Tarjeta resumen de Perfil (Header con Gradiente y Avatar)
+              PopupMenuItem<String>(
                 value: 'view_profile',
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 4),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    gradient: isMerchant ? AppColors.accentGradient : AppColors.heroGradient,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isMerchant ? AppColors.accent : AppColors.primary).withOpacity(0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 17,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          appState.currentUser.avatarInitials,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w900,
+                            color: isMerchant ? AppColors.accent : AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              appState.currentUser.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Text(
+                                  isMerchant ? 'Ver Perfil Comercial' : 'Ver Mi Perfil',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(width: 3),
+                                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 9),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const PopupMenuDivider(height: 12),
+
+              // 2. Cambiar de Rol (Consumidor <-> Comercio)
+              PopupMenuItem<String>(
+                value: 'switch_role',
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      color: AppColors.primary,
-                      size: 20,
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: (isMerchant ? AppColors.primary : AppColors.accent).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        isMerchant ? Icons.person_rounded : Icons.storefront_rounded,
+                        color: isMerchant ? AppColors.primary : AppColors.accent,
+                        size: 18,
+                      ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 12),
                     Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            isMerchant ? 'Modo Consumidor' : 'Modo Comercio',
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const Text(
+                            'Alternar vista de prueba',
+                            style: TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.swap_horiz_rounded, size: 18, color: AppColors.textMuted),
+                  ],
+                ),
+              ),
+
+              // 3. Simular / Alternar Modo Offline
+              PopupMenuItem<String>(
+                value: 'toggle_offline',
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: (appState.isOfflineMode ? AppColors.warning : AppColors.success).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        appState.isOfflineMode ? Icons.wifi_off_rounded : Icons.wifi_rounded,
+                        color: appState.isOfflineMode ? AppColors.warning : AppColors.success,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            appState.isOfflineMode ? 'Desactivar Offline' : 'Modo Offline',
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            appState.isOfflineMode ? 'Operando con caché' : 'Conectado a la nube',
+                            style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: (appState.isOfflineMode ? AppColors.warning : AppColors.success).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                       child: Text(
-                        'Mi Perfil (${appState.currentUser.name})',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        appState.isOfflineMode ? 'OFF' : 'ONLINE',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: appState.isOfflineMode ? AppColors.warning : AppColors.success,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const PopupMenuDivider(),
-              PopupMenuItem(
-                value: 'switch_role',
-                child: Row(
-                  children: [
-                    Icon(
-                      isMerchant ? Icons.person_outline_rounded : Icons.storefront_outlined,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      isMerchant ? 'Cambiar a Modo Consumidor' : 'Cambiar a Modo Comercio',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'toggle_offline',
-                child: Row(
-                  children: [
-                    Icon(
-                      appState.isOfflineMode ? Icons.wifi : Icons.wifi_off,
-                      color: appState.isOfflineMode ? AppColors.success : AppColors.warning,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      appState.isOfflineMode ? 'Desactivar Modo Offline' : 'Simular Modo Offline',
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem(
+
+              const PopupMenuDivider(height: 12),
+
+              // 4. Cerrar Sesión
+              PopupMenuItem<String>(
                 value: 'logout',
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 child: Row(
                   children: [
-                    Icon(Icons.logout_rounded, color: AppColors.error, size: 20),
-                    SizedBox(width: 10),
-                    Text(
-                      'Cerrar Sesión',
-                      style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600, fontSize: 13),
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: AppColors.error.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.logout_rounded, color: AppColors.error, size: 18),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Cerrar Sesión',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.error,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -280,11 +439,6 @@ class MainShellScreen extends StatelessWidget {
                   activeIcon: Icon(Icons.add_circle_rounded),
                   label: 'Publicar',
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_rounded),
-                  activeIcon: Icon(Icons.person_rounded),
-                  label: 'Mi Perfil',
-                ),
               ]
             : [
                 const BottomNavigationBarItem(
@@ -305,11 +459,6 @@ class MainShellScreen extends StatelessWidget {
                   icon: Icon(Icons.eco_outlined),
                   activeIcon: Icon(Icons.eco_rounded),
                   label: AppStrings.navImpact,
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_rounded),
-                  activeIcon: Icon(Icons.person_rounded),
-                  label: 'Mi Perfil',
                 ),
               ],
       ),

@@ -75,6 +75,23 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary, size: 19),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'Mi Perfil',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
@@ -327,7 +344,7 @@ class ProfileScreen extends StatelessWidget {
                       style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                     ),
                     value: appState.isOfflineMode,
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     onChanged: (_) => appState.toggleOfflineMode(),
                   ),
                   const Divider(height: 1, indent: 54, color: AppColors.border),
