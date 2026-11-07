@@ -13,6 +13,7 @@ class FoodPackage {
   final double estimatedKg;
   final double co2SavedKg;
   final String categoryEmoji;
+  final bool isActive;
 
   const FoodPackage({
     required this.id,
@@ -29,31 +30,44 @@ class FoodPackage {
     required this.estimatedKg,
     required this.co2SavedKg,
     required this.categoryEmoji,
+    this.isActive = true,
   });
 
   int get discountPercentage =>
       (((originalPrice - discountedPrice) / originalPrice) * 100).round();
 
-  bool get isAvailable => remainingStock > 0;
+  bool get isAvailable => isActive && remainingStock > 0;
 
   FoodPackage copyWith({
+    String? title,
+    String? description,
+    String? category,
+    double? originalPrice,
+    double? discountedPrice,
+    int? initialStock,
     int? remainingStock,
+    String? pickupTimeWindow,
+    double? estimatedKg,
+    double? co2SavedKg,
+    String? categoryEmoji,
+    bool? isActive,
   }) {
     return FoodPackage(
       id: id,
       storeId: storeId,
       storeName: storeName,
-      title: title,
-      description: description,
-      category: category,
-      originalPrice: originalPrice,
-      discountedPrice: discountedPrice,
-      initialStock: initialStock,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      originalPrice: originalPrice ?? this.originalPrice,
+      discountedPrice: discountedPrice ?? this.discountedPrice,
+      initialStock: initialStock ?? this.initialStock,
       remainingStock: remainingStock ?? this.remainingStock,
-      pickupTimeWindow: pickupTimeWindow,
-      estimatedKg: estimatedKg,
-      co2SavedKg: co2SavedKg,
-      categoryEmoji: categoryEmoji,
+      pickupTimeWindow: pickupTimeWindow ?? this.pickupTimeWindow,
+      estimatedKg: estimatedKg ?? this.estimatedKg,
+      co2SavedKg: co2SavedKg ?? this.co2SavedKg,
+      categoryEmoji: categoryEmoji ?? this.categoryEmoji,
+      isActive: isActive ?? this.isActive,
     );
   }
 }

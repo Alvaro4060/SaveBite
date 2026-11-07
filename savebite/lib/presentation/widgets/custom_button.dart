@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
   final bool isOutlined;
   final bool isFullWidth;
   final double height;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
@@ -21,14 +22,24 @@ class CustomButton extends StatelessWidget {
     this.isOutlined = false,
     this.isFullWidth = true,
     this.height = 50,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final Widget buttonContent = Row(
-      mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+    final Widget buttonContent = isLoading
+        ? SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.2,
+              valueColor: AlwaysStoppedAnimation<Color>(isOutlined ? backgroundColor : textColor),
+            ),
+          )
+        : Row(
+            mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
         if (icon != null) ...[
           Icon(icon, size: 18, color: isOutlined ? backgroundColor : textColor),
           const SizedBox(width: 6),

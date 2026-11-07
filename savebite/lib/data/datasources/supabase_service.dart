@@ -165,16 +165,24 @@ class SupabaseService {
               estimatedKg: (row['estimated_kg'] as num?)?.toDouble() ?? 1.0,
               co2SavedKg: (row['co2_saved_kg'] as num?)?.toDouble() ?? 2.0,
               categoryEmoji: (row['category_emoji'] ?? '🍱') as String,
+              isActive: row['is_active'] as bool? ?? true,
             );
           }).toList();
         });
   }
 
-  Future<void> insertPackage(FoodPackage pkg) async {
-    if (!isReady) return;
+  Future<FoodPackage?> insertPackage(FoodPackage pkg) async {
+    if (!isReady) return null;
     try {
-      await client.from('food_packages').insert({
-        'store_id': pkg.storeId,
+      // Validar que store_id sea un UUID válido de 36 caracteres, o usar fallback de la tienda demo
+      String validStoreId = pkg.storeId;
+      final uuidRegex = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+      if (!uuidRegex.hasMatch(validStoreId)) {
+        validStoreId = '11111111-1111-1111-1111-111111111111';
+      }
+
+      final resList = await client.from('food_packages').insert({
+        'store_id': validStoreId,
         'store_name': pkg.storeName,
         'title': pkg.title,
         'description': pkg.description,
@@ -187,10 +195,95 @@ class SupabaseService {
         'pickup_time_window': pkg.pickupTimeWindow,
         'estimated_kg': pkg.estimatedKg,
         'co2_saved_kg': pkg.co2SavedKg,
-      });
+        'is_active': pkg.isActive,
+      }).select();
+
+      if (resList.isNotEmpty) {
+        final row = resList.first;
+        return FoodPackage(
+          id: row['id'] as String,
+          storeId: (row['store_id'] ?? validStoreId).toString(),
+          storeName: (row['store_name'] ?? pkg.storeName) as String,
+          title: (row['title'] ?? pkg.title) as String,
+          description: (row['description'] ?? pkg.description) as String,
+          category: (row['category'] ?? pkg.category) as String,
+          originalPrice: (row['original_price'] as num?)?.toDouble() ?? pkg.originalPrice,
+          discountedPrice: (row['discounted_price'] as num?)?.toDouble() ?? pkg.discountedPrice,
+          initialStock: (row['initial_stock'] as num?)?.toInt() ?? pkg.initialStock,
+          remainingStock: (row['remaining_stock'] as num?)?.toInt() ?? pkg.remainingStock,
+          pickupTimeWindow: (row['pickup_time_window'] ?? pkg.pickupTimeWindow) as String,
+          estimatedKg: (row['estimated_kg'] as num?)?.toDouble() ?? pkg.estimatedKg,
+          co2SavedKg: (row['co2_saved_kg'] as num?)?.toDouble() ?? pkg.co2SavedKg,
+          categoryEmoji: (row['category_emoji'] ?? pkg.categoryEmoji) as String,
+          isActive: row['is_active'] as bool? ?? true,
+        );
+      }
+      return null;
     } catch (e) {
       debugPrint('[SupabaseService] Error creando paquete en Supabase: $e');
-      rethrow;
+      return null;
+    }
+  }
+
+  Future<bool> updatePackageStock(String packageId, int newStock) async {
+    if (!isReady) return false;
+    try {
+      await client.from('food_packages').update({
+        'remaining_stock': newStock,
+        if (newStock == 0) 'is_active': false,
+      }).eq('id', packageId);
+      return true;
+    } catch (e) {
+      debugPrint('[SupabaseService] Error actualizando stock en Supabase: $e');
+      return false;
+    }
+  }
+
+  Future<bool> togglePackageActive(String packageId, bool isActive) async {
+    if (!isReady) return false;
+    try {
+      await client.from('food_packages').update({
+        'is_active': isActive,
+      }).eq('id', packageId);
+      return true;
+    } catch (e) {
+      debugPrint('[SupabaseService] Error alternando estado de paquete: $e');
+      return false;
+    }
+  }
+
+  Future<bool> updatePackage(FoodPackage pkg) async {
+    if (!isReady) return false;
+    try {
+      await client.from('food_packages').update({
+        'title': pkg.title,
+        'description': pkg.description,
+        'category': pkg.category,
+        'category_emoji': pkg.categoryEmoji,
+        'original_price': pkg.originalPrice,
+        'discounted_price': pkg.discountedPrice,
+        'initial_stock': pkg.initialStock,
+        'remaining_stock': pkg.remainingStock,
+        'pickup_time_window': pkg.pickupTimeWindow,
+        'estimated_kg': pkg.estimatedKg,
+        'co2_saved_kg': pkg.co2SavedKg,
+        'is_active': pkg.isActive,
+      }).eq('id', pkg.id);
+      return true;
+    } catch (e) {
+      debugPrint('[SupabaseService] Error actualizando paquete: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deletePackage(String packageId) async {
+    if (!isReady) return false;
+    try {
+      await client.from('food_packages').delete().eq('id', packageId);
+      return true;
+    } catch (e) {
+      debugPrint('[SupabaseService] Error eliminando paquete en Supabase: $e');
+      return false;
     }
   }
 

@@ -45,7 +45,7 @@ class AppState extends ChangeNotifier {
     name: 'Don Ricardo Torres',
     email: 'panaderia.latradicion@gmail.com',
     role: UserRole.merchant,
-    storeId: 'store_1',
+    storeId: '11111111-1111-1111-1111-111111111111',
     storeName: 'Panadería La Tradición',
     avatarInitials: 'RT',
   );
@@ -77,7 +77,22 @@ class AppState extends ChangeNotifier {
 
   // Paquetes para el comercio actual
   List<FoodPackage> get merchantPackages {
-    return _packages.where((p) => p.storeId == (_currentUser.storeId ?? 'store_1')).toList();
+    final currentStoreId = _currentUser.storeId ?? '11111111-1111-1111-1111-111111111111';
+    final currentStoreName = (_currentUser.storeName ?? 'Panadería La Tradición').toLowerCase().trim();
+    return _packages.where((p) {
+      return p.storeId == currentStoreId ||
+          (currentStoreName.isNotEmpty && p.storeName.toLowerCase().trim() == currentStoreName);
+    }).toList();
+  }
+
+  // Canjes realizados hoy para este comercio
+  List<Reservation> get merchantRedeemedReservations {
+    final currentStoreName = (_currentUser.storeName ?? 'Panadería La Tradición').toLowerCase().trim();
+    return _reservations.where((r) {
+      return r.isRedeemed &&
+          (r.storeName.toLowerCase().trim() == currentStoreName ||
+              r.storeName.toLowerCase().contains('tradición'));
+    }).toList();
   }
 
   // Reservas activas pendientes de recoger
@@ -88,6 +103,8 @@ class AppState extends ChangeNotifier {
   // Filtrado reactivo de paquetes
   List<FoodPackage> _filteredPackages() {
     return _packages.where((p) {
+      // Si es vista de consumidor, ocultar paquetes pausados o inactivos
+      if (!isMerchant && !p.isActive) return false;
       final matchesCategory = _selectedCategory == 'Todos' || p.category == _selectedCategory;
       final matchesSearch = _searchQuery.isEmpty ||
           p.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -253,7 +270,7 @@ class AppState extends ChangeNotifier {
   }
 
   /// Publicar nuevo paquete (Modo Comercio)
-  void publishNewPackage({
+  Future<FoodPackage> publishNewPackage({
     required String title,
     required String description,
     required String category,
@@ -263,11 +280,15 @@ class AppState extends ChangeNotifier {
     required String pickupWindow,
     required double estimatedKg,
     required String categoryEmoji,
-  }) {
-    final newPkg = FoodPackage(
-      id: 'pkg_${DateTime.now().millisecondsSinceEpoch}',
-      storeId: _currentUser.storeId ?? 'store_1',
-      storeName: _currentUser.storeName ?? 'Panadería La Tradición',
+  }) async {
+    final localId = 'pkg_${DateTime.now().millisecondsSinceEpoch}';
+    final storeId = _currentUser.storeId ?? '11111111-1111-1111-1111-111111111111';
+    final storeName = _currentUser.storeName ?? 'Panadería La Tradición';
+
+    FoodPackage newPkg = FoodPackage(
+      id: localId,
+      storeId: storeId,
+      storeName: storeName,
       title: title,
       description: description,
       category: category,
@@ -279,13 +300,93 @@ class AppState extends ChangeNotifier {
       estimatedKg: estimatedKg,
       co2SavedKg: estimatedKg * 2.1,
       categoryEmoji: categoryEmoji,
+      isActive: true,
     );
 
-    _packages.insert(0, newPkg);
-    if (SupabaseService.instance.isReady) {
-      SupabaseService.instance.insertPackage(newPkg);
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      final remotePkg = await SupabaseService.instance.insertPackage(newPkg);
+      if (remotePkg != null) {
+        newPkg = remotePkg;
+      }
+    }
+
+    final existingIdx = _packages.indexWhere((p) => p.id == newPkg.id);
+    if (existingIdx != -1) {
+      _packages[existingIdx] = newPkg;
+    } else {
+      _packages.insert(0, newPkg);
     }
     notifyListeners();
+    return newPkg;
+  }
+
+  /// Incrementar o decrementar stock de un paquete (Comercio)
+  Future<void> updatePackageStock(String packageId, int delta) async {
+    final idx = _packages.indexWhere((p) => p.id == packageId);
+    if (idx == -1) return;
+
+    final current = _packages[idx];
+    final newStock = (current.remainingStock + delta).clamp(0, 99);
+    final updated = current.copyWith(
+      remainingStock: newStock,
+      isActive: newStock > 0 ? current.isActive : false,
+    );
+
+    _packages[idx] = updated;
+    notifyListeners();
+
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      await SupabaseService.instance.updatePackageStock(packageId, newStock);
+    }
+  }
+
+  /// Alternar estado de venta Activo / Pausado (Comercio)
+  Future<void> togglePackageActive(String packageId) async {
+    final idx = _packages.indexWhere((p) => p.id == packageId);
+    if (idx == -1) return;
+
+    final current = _packages[idx];
+    final newStatus = !current.isActive;
+    // Si se activa y tenía 0 stock, darle al menos 1
+    final newStock = (newStatus && current.remainingStock == 0) ? 1 : current.remainingStock;
+
+    final updated = current.copyWith(
+      isActive: newStatus,
+      remainingStock: newStock,
+    );
+
+    _packages[idx] = updated;
+    notifyListeners();
+
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      await SupabaseService.instance.togglePackageActive(packageId, newStatus);
+      if (newStock != current.remainingStock) {
+        await SupabaseService.instance.updatePackageStock(packageId, newStock);
+      }
+    }
+  }
+
+  /// Editar paquete existente (Comercio)
+  Future<void> editPackage(FoodPackage updatedPkg) async {
+    final idx = _packages.indexWhere((p) => p.id == updatedPkg.id);
+    if (idx != -1) {
+      _packages[idx] = updatedPkg;
+      notifyListeners();
+    }
+
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      await SupabaseService.instance.updatePackage(updatedPkg);
+    }
+  }
+
+  /// Eliminar paquete (Comercio)
+  Future<void> deletePackage(String packageId) async {
+    _packages.removeWhere((p) => p.id == packageId);
+    notifyListeners();
+
+    if (SupabaseService.instance.isReady && !_isOfflineMode) {
+      await SupabaseService.instance.deletePackage(packageId);
+    }
   }
 
   /// Canjear y validar entrega mediante escáner QR en mostrador (Supabase + fallback)

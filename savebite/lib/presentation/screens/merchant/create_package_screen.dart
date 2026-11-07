@@ -26,6 +26,7 @@ class _CreatePackageScreenState extends State<CreatePackageScreen> {
 
   String _selectedCategory = 'Panaderías';
   String _categoryEmoji = '🥐';
+  bool _isPublishing = false;
 
   final List<Map<String, String>> _categories = const [
     {'name': 'Panaderías', 'emoji': '🥐'},
@@ -46,14 +47,18 @@ class _CreatePackageScreenState extends State<CreatePackageScreen> {
     super.dispose();
   }
 
-  void _onPublish(BuildContext context) {
+  Future<void> _onPublish(BuildContext context) async {
+    if (_formKey.currentState != null && !_formKey.currentState!.validate()) return;
+
+    setState(() => _isPublishing = true);
+
     final original = double.tryParse(_originalPriceController.text) ?? 100.0;
     final discounted = double.tryParse(_discountedPriceController.text) ?? 40.0;
     final stock = int.tryParse(_stockController.text) ?? 3;
     final kg = double.tryParse(_kgController.text) ?? 1.0;
 
     final appState = AppStateProvider.of(context);
-    appState.publishNewPackage(
+    await appState.publishNewPackage(
       title: _titleController.text.trim(),
       description: _descController.text.trim(),
       category: _selectedCategory,
@@ -65,18 +70,21 @@ class _CreatePackageScreenState extends State<CreatePackageScreen> {
       categoryEmoji: _categoryEmoji,
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: AppColors.greenDark,
-        content: Text('¡Paquete sorpresa publicado con éxito en Salamanca!'),
-      ),
-    );
+    if (mounted) {
+      setState(() => _isPublishing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: AppColors.greenDark,
+          content: Text('¡Paquete sorpresa publicado y sincronizado en Salamanca!'),
+        ),
+      );
 
-    // Si viene en pila de navegación, hacer pop
-    if (Navigator.of(context).canPop()) {
-      Navigator.of(context).pop();
-    } else {
-      appState.setTabIndex(0); // Regresa a panel
+      // Si viene en pila de navegación, hacer pop
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        appState.setTabIndex(0); // Regresa a panel
+      }
     }
   }
 
@@ -303,10 +311,11 @@ class _CreatePackageScreenState extends State<CreatePackageScreen> {
 
               // Botón Publicar
               CustomButton(
-                text: 'Publicar Paquete Ahora',
+                text: _isPublishing ? 'Publicando...' : 'Publicar Paquete Ahora',
                 icon: Icons.cloud_upload_outlined,
                 backgroundColor: AppColors.primary,
-                onPressed: () => _onPublish(context),
+                isLoading: _isPublishing,
+                onPressed: _isPublishing ? null : () => _onPublish(context),
               ),
 
               const SizedBox(height: 20),
