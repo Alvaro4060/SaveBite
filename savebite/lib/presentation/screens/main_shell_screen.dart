@@ -204,16 +204,21 @@ class MainShellScreen extends StatelessWidget {
           if (appState.isOfflineMode)
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
               color: AppColors.dark,
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.wifi_off_rounded, color: Colors.amber, size: 16),
-                  SizedBox(width: 8),
-                  Text(
-                    'Modo Offline Activo: Vouchers cargados desde la caché local',
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                  Icon(Icons.wifi_off_rounded, color: Colors.amber, size: 15),
+                  SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      'Modo Offline Activo • Usando caché local',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
