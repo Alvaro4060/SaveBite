@@ -9,6 +9,7 @@ import 'impact/impact_calculator_screen.dart';
 import 'merchant/merchant_dashboard_screen.dart';
 import 'merchant/qr_scanner_screen.dart';
 import 'merchant/create_package_screen.dart';
+import 'merchant/merchant_sales_history_screen.dart';
 import 'profile/profile_screen.dart';
 import 'auth/login_screen.dart';
 
@@ -30,7 +31,7 @@ class MainShellScreen extends StatelessWidget {
     final List<Widget> merchantScreens = [
       const MerchantDashboardScreen(),
       const QrScannerScreen(),
-      const CreatePackageScreen(),
+      const MerchantSalesHistoryScreen(),
     ];
 
     final activeScreens = isMerchant ? merchantScreens : consumerScreens;
@@ -435,9 +436,9 @@ class MainShellScreen extends StatelessWidget {
                   label: 'Escanear QR',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.add_circle_outline_rounded),
-                  activeIcon: Icon(Icons.add_circle_rounded),
-                  label: 'Publicar',
+                  icon: Icon(Icons.receipt_long_outlined),
+                  activeIcon: Icon(Icons.receipt_long_rounded),
+                  label: 'Ventas & Corte',
                 ),
               ]
             : [

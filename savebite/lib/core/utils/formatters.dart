@@ -17,4 +17,17 @@ class Formatters {
     }
     return '${distanceInKm.toStringAsFixed(1)} km';
   }
+
+  /// Formatea la hora (ej: 19:45 hrs)
+  static String formatTime(DateTime dt) {
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$h:$m hrs';
+  }
+
+  /// Formatea la fecha (ej: 07 Nov 2026)
+  static String formatDate(DateTime dt) {
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return '${dt.day.toString().padLeft(2, '0')} ${months[dt.month - 1]} ${dt.year}';
+  }
 }
