@@ -25,7 +25,13 @@ class AppState extends ChangeNotifier {
 
       SupabaseService.instance.getReservationsStream().listen((realtimeReservations) {
         if (realtimeReservations.isNotEmpty) {
-          _reservations = realtimeReservations;
+          final combined = List<Reservation>.from(realtimeReservations);
+          for (final mockR in MockData.initialReservations) {
+            if (combined.every((r) => r.id != mockR.id && r.qrToken != mockR.qrToken)) {
+              combined.add(mockR);
+            }
+          }
+          _reservations = combined;
           notifyListeners();
         }
       });

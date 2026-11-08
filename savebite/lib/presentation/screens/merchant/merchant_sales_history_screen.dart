@@ -162,23 +162,22 @@ class _MerchantSalesHistoryScreenState extends State<MerchantSalesHistoryScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.monetization_on_rounded, color: Colors.white, size: 14),
+                            Icon(Icons.monetization_on_rounded, color: Colors.white, size: 13),
                             SizedBox(width: 4),
                             Text(
                               'VENTAS RECUPERADAS',
                               style: TextStyle(
-                                fontSize: 10.5,
+                                fontSize: 9.5,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
                                 letterSpacing: 0.5,
@@ -187,12 +186,18 @@ class _MerchantSalesHistoryScreenState extends State<MerchantSalesHistoryScreen>
                           ],
                         ),
                       ),
-                      Text(
-                        user.storeName ?? 'Panadería La Tradición',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          user.storeName ?? 'Panadería La Tradición',
+                          textAlign: TextAlign.end,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
@@ -276,31 +281,61 @@ class _MerchantSalesHistoryScreenState extends State<MerchantSalesHistoryScreen>
 
             const SizedBox(height: 22),
 
-            // FILTROS DE PERÍODO
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // SECCIÓN HISTORIAL Y FILTROS DE PERÍODO (RESPONSIVE)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Historial de Entregas', style: AppStyles.heading3),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Historial de Entregas',
+                        style: AppStyles.heading3,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${redeemedList.length} canjes',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.greenDark),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 Row(
                   children: ['Hoy', 'Semana', 'Total'].map((period) {
                     final isSelected = _selectedPeriod == period;
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 6),
-                      child: InkWell(
-                        onTap: () => setState(() => _selectedPeriod = period),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: isSelected ? AppColors.primary : AppColors.surfaceMuted,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            period,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: isSelected ? Colors.white : AppColors.textSecondary,
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: InkWell(
+                          onTap: () => setState(() => _selectedPeriod = period),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 7),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isSelected ? AppColors.primary : AppColors.surfaceMuted,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: isSelected ? AppColors.primary : AppColors.border,
+                              ),
+                            ),
+                            child: Text(
+                              period,
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected ? Colors.white : AppColors.textSecondary,
+                              ),
                             ),
                           ),
                         ),
@@ -354,7 +389,14 @@ class _ReceiptRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
         Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
       ],
     );
@@ -449,15 +491,18 @@ class _TransactionTile extends StatelessWidget {
                       style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceMuted,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        reservation.id.length > 12 ? reservation.id.substring(0, 12) : reservation.id,
-                        style: const TextStyle(fontSize: 9.5, fontFamily: 'monospace', color: AppColors.textSecondary),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceMuted,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          reservation.id.length > 12 ? reservation.id.substring(0, 12) : reservation.id,
+                          style: const TextStyle(fontSize: 9.5, fontFamily: 'monospace', color: AppColors.textSecondary),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
