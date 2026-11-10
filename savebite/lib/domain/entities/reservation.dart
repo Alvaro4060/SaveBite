@@ -18,6 +18,9 @@ class Reservation {
   final double co2SavedKg;
   final double foodRescuedKg;
   final bool isOfflineCached;
+  final bool isReviewed;
+  final double? userRating;
+  final String? userReviewComment;
 
   const Reservation({
     required this.id,
@@ -33,6 +36,9 @@ class Reservation {
     required this.co2SavedKg,
     required this.foodRescuedKg,
     this.isOfflineCached = true,
+    this.isReviewed = false,
+    this.userRating,
+    this.userReviewComment,
   });
 
   bool get isRedeemed => status == ReservationStatus.redeemed;
@@ -40,6 +46,10 @@ class Reservation {
 
   Reservation copyWith({
     ReservationStatus? status,
+    bool? isReviewed,
+    double? userRating,
+    String? userReviewComment,
+    bool? isOfflineCached,
   }) {
     return Reservation(
       id: id,
@@ -54,7 +64,10 @@ class Reservation {
       status: status ?? this.status,
       co2SavedKg: co2SavedKg,
       foodRescuedKg: foodRescuedKg,
-      isOfflineCached: isOfflineCached,
+      isOfflineCached: isOfflineCached ?? this.isOfflineCached,
+      isReviewed: isReviewed ?? this.isReviewed,
+      userRating: userRating ?? this.userRating,
+      userReviewComment: userReviewComment ?? this.userReviewComment,
     );
   }
 }

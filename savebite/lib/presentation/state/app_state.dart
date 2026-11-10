@@ -5,6 +5,7 @@ import '../../domain/entities/reservation.dart';
 import '../../domain/entities/store.dart';
 import '../../domain/entities/eco_impact.dart';
 import '../../domain/entities/redeem_result.dart';
+import '../../domain/entities/review.dart';
 import '../../data/datasources/mock_data.dart';
 import '../../data/datasources/supabase_service.dart';
 export 'app_state_provider.dart';
@@ -61,6 +62,7 @@ class AppState extends ChangeNotifier {
   List<FoodPackage> _packages = List.from(MockData.packages);
   List<Reservation> _reservations = List.from(MockData.initialReservations);
   final List<Store> _stores = List.from(MockData.stores);
+  final List<Review> _reviews = List.from(MockData.initialReviews);
   EcoImpact _ecoImpact = MockData.getInitialImpact();
 
   String _selectedCategory = 'Todos';
@@ -75,6 +77,7 @@ class AppState extends ChangeNotifier {
   List<FoodPackage> get allPackages => _packages;
   List<Reservation> get reservations => _reservations;
   List<Store> get stores => _stores;
+  List<Review> get reviews => _reviews;
   EcoImpact get ecoImpact => _ecoImpact;
   String get selectedCategory => _selectedCategory;
   String get searchQuery => _searchQuery;
@@ -453,5 +456,100 @@ class AppState extends ChangeNotifier {
       message: 'Código no encontrado o no pertenece a SaveBite: $token',
       token: token,
     );
+  }
+
+  /// Obtener todas las opiniones y reseñas de un comercio
+  List<Review> getReviewsForStore(String storeName) {
+    final clean = storeName.toLowerCase().trim();
+    return _reviews.where((r) {
+      final rName = r.storeName.toLowerCase().trim();
+      return rName == clean || rName.contains(clean) || clean.contains(rName);
+    }).toList();
+  }
+
+  /// Obtener la calificación promedio (estrellas) de un comercio
+  double getStoreAverageRating(String storeName) {
+    final storeReviews = getReviewsForStore(storeName);
+    if (storeReviews.isEmpty) {
+      final store = _stores.where((s) {
+        final clean = storeName.toLowerCase().trim();
+        final sName = s.name.toLowerCase().trim();
+        return sName == clean || sName.contains(clean) || clean.contains(sName);
+      }).firstOrNull;
+      return store?.rating ?? 4.8;
+    }
+    final sum = storeReviews.fold<double>(0.0, (acc, r) => acc + r.rating);
+    return double.parse((sum / storeReviews.length).toStringAsFixed(1));
+  }
+
+  /// Conteo de opiniones de un comercio
+  int getStoreReviewCount(String storeName) {
+    return getReviewsForStore(storeName).length;
+  }
+
+  /// Enviar y guardar una nueva reseña tras el canje de un paquete
+  Future<Review> submitReview({
+    required String reservationId,
+    required String storeName,
+    required String packageTitle,
+    required double rating,
+    required String comment,
+    required List<String> tags,
+  }) async {
+    final newId = 'rev_${DateTime.now().millisecondsSinceEpoch}';
+    final storeMatch = _stores.where((s) {
+      final clean = storeName.toLowerCase().trim();
+      final sName = s.name.toLowerCase().trim();
+      return sName == clean || sName.contains(clean) || clean.contains(sName);
+    }).firstOrNull;
+
+    final review = Review(
+      id: newId,
+      reservationId: reservationId,
+      storeId: storeMatch?.id,
+      storeName: storeName,
+      packageTitle: packageTitle,
+      userName: _currentUser.name,
+      userInitials: _currentUser.avatarInitials,
+      rating: rating,
+      comment: comment,
+      tags: tags,
+      createdAt: DateTime.now(),
+    );
+
+    // 1. Agregar a la lista de reseñas
+    _reviews.insert(0, review);
+
+    // 2. Actualizar el estado de la reserva
+    final resIdx = _reservations.indexWhere((r) => r.id == reservationId);
+    if (resIdx != -1) {
+      _reservations[resIdx] = _reservations[resIdx].copyWith(
+        isReviewed: true,
+        userRating: rating,
+        userReviewComment: comment,
+      );
+    }
+
+    // 3. Recalcular rating de la tienda si está en la lista de comercios
+    if (storeMatch != null) {
+      final sIdx = _stores.indexWhere((s) => s.id == storeMatch.id);
+      if (sIdx != -1) {
+        final newAvg = getStoreAverageRating(storeName);
+        _stores[sIdx] = Store(
+          id: storeMatch.id,
+          name: storeMatch.name,
+          category: storeMatch.category,
+          address: storeMatch.address,
+          latitude: storeMatch.latitude,
+          longitude: storeMatch.longitude,
+          distanceKm: storeMatch.distanceKm,
+          rating: newAvg,
+          iconEmoji: storeMatch.iconEmoji,
+        );
+      }
+    }
+
+    notifyListeners();
+    return review;
   }
 }

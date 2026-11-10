@@ -8,7 +8,6 @@ import 'reservations/reservations_screen.dart';
 import 'impact/impact_calculator_screen.dart';
 import 'merchant/merchant_dashboard_screen.dart';
 import 'merchant/qr_scanner_screen.dart';
-import 'merchant/create_package_screen.dart';
 import 'merchant/merchant_sales_history_screen.dart';
 import 'profile/profile_screen.dart';
 import 'auth/login_screen.dart';

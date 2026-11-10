@@ -4,6 +4,7 @@ import '../../../core/constants/app_styles.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/reservation.dart';
 import '../../state/app_state.dart';
+import '../../widgets/rate_experience_dialog.dart';
 import '../qr_voucher/voucher_screen.dart';
 
 class ReservationsScreen extends StatefulWidget {
@@ -262,6 +263,74 @@ class _ReservationItemCard extends StatelessWidget {
                           ),
                         ],
                       ),
+                      // Módulo 1: Calificación y Reseña Post-Canje
+                      if (reservation.isRedeemed) ...[
+                        const SizedBox(height: 10),
+                        if (!reservation.isReviewed) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            height: 32,
+                            child: OutlinedButton.icon(
+                              onPressed: () => RateExperienceDialog.show(context, reservation),
+                              icon: const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
+                              label: const Text(
+                                '⭐ Calificar Experiencia',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.accentHover,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: AppColors.accent, width: 1.2),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                backgroundColor: AppColors.accent.withOpacity(0.08),
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                              ),
+                            ),
+                          ),
+                        ] else ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.amber.shade300),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.star_rounded, size: 14, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${reservation.userRating?.toStringAsFixed(1) ?? '5.0'} • Calificado',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.amber.shade900,
+                                  ),
+                                ),
+                                if (reservation.userReviewComment != null && reservation.userReviewComment!.isNotEmpty) ...[
+                                  const SizedBox(width: 6),
+                                  const Text('•', style: TextStyle(color: Colors.grey, fontSize: 10)),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      '"${reservation.userReviewComment!}"',
+                                      style: const TextStyle(
+                                        fontSize: 10.5,
+                                        fontStyle: FontStyle.italic,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ],
                   ),
                 ),

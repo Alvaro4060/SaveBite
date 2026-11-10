@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_styles.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/food_package.dart';
 import '../../../domain/entities/store.dart';
@@ -20,8 +20,9 @@ typedef SimulatedMapView = InteractiveMapView;
 
 class _InteractiveMapViewState extends State<InteractiveMapView> {
   final MapController _mapController = MapController();
-  static const LatLng _salamancaCenter = LatLng(20.5735, -101.1960);
-  static const LatLng _userLocation = LatLng(20.5745, -101.1952); // Plaza Cívica Miguel Hidalgo
+  static const LatLng _salamancaDefaultCenter = LatLng(20.5735, -101.1960);
+  LatLng? _currentUserLocation;
+  bool _isLocating = false;
   Store? _selectedStore;
 
   @override
@@ -34,22 +35,88 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
           _selectedStore = appState.stores.first;
         });
       }
+      // Obtener ubicación GPS real del teléfono automáticamente
+      _fetchRealLocation(moveCamera: true);
     });
+  }
+
+  Future<void> _fetchRealLocation({bool moveCamera = false}) async {
+    setState(() => _isLocating = true);
+
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Por favor activa el GPS / Ubicación en tu teléfono para localizarte exactamente.'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+        setState(() => _isLocating = false);
+        return;
+      }
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Permiso de ubicación denegado.')),
+            );
+          }
+          setState(() => _isLocating = false);
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Permiso de ubicación denegado permanentemente. Actívalo en ajustes de la app.')),
+          );
+        }
+        setState(() => _isLocating = false);
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      );
+
+      final realLocation = LatLng(position.latitude, position.longitude);
+
+      if (mounted) {
+        setState(() {
+          _currentUserLocation = realLocation;
+          _isLocating = false;
+        });
+
+        if (moveCamera) {
+          _mapController.move(realLocation, 16.0);
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: AppColors.greenDark,
+            content: Text('¡Ubicación exacta detectada por GPS!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('[Map] Error obteniendo GPS: $e');
+      if (mounted) {
+        setState(() => _isLocating = false);
+      }
+    }
   }
 
   void _flyToStore(Store store) {
     setState(() => _selectedStore = store);
     _mapController.move(LatLng(store.latitude, store.longitude), 15.5);
-  }
-
-  void _centerOnUser() {
-    _mapController.move(_userLocation, 15.5);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Centrado en tu ubicación en Salamanca (Plaza Cívica)'),
-        duration: Duration(seconds: 1),
-      ),
-    );
   }
 
   void _zoomIn() {
@@ -62,10 +129,23 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
     _mapController.move(_mapController.camera.center, currentZoom - 1);
   }
 
+  double _getCalculatedDistance(Store store) {
+    if (_currentUserLocation == null) return store.distanceKm;
+    final meters = Geolocator.distanceBetween(
+      _currentUserLocation!.latitude,
+      _currentUserLocation!.longitude,
+      store.latitude,
+      store.longitude,
+    );
+    return meters / 1000.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = AppStateProvider.of(context);
     final stores = appState.stores;
+
+    final userPoint = _currentUserLocation ?? _salamancaDefaultCenter;
 
     // Paquetes disponibles en la tienda seleccionada
     final selectedStorePackages = _selectedStore == null
@@ -74,13 +154,13 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
 
     return Stack(
       children: [
-        // 1. MAPA INTERACTIVO REAL OPENSTREETMAP DE SALAMANCA
+        // 1. MAPA INTERACTIVO OPENSTREETMAP
         FlutterMap(
           mapController: _mapController,
-          options: const MapOptions(
-            initialCenter: _salamancaCenter,
-            initialZoom: 14.5,
-            minZoom: 12.0,
+          options: MapOptions(
+            initialCenter: userPoint,
+            initialZoom: 15.0,
+            minZoom: 11.0,
             maxZoom: 18.5,
           ),
           children: [
@@ -90,34 +170,34 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
             ),
             MarkerLayer(
               markers: [
-                // Marcador de Ubicación del Usuario
+                // Marcador de Ubicación del Usuario (GPS Real)
                 Marker(
-                  point: _userLocation,
-                  width: 90,
-                  height: 52,
+                  point: userPoint,
+                  width: 95,
+                  height: 56,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppColors.secondaryDark,
+                          color: _currentUserLocation != null ? AppColors.primary : AppColors.secondaryDark,
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: const [
                             BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 1)),
                           ],
                         ),
-                        child: const Text(
-                          'Tú estás aquí',
-                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
+                        child: Text(
+                          _currentUserLocation != null ? 'Tu ubicación real' : 'Salamanca Centro',
+                          style: const TextStyle(fontSize: 8.5, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        width: 16,
-                        height: 16,
+                        width: 18,
+                        height: 18,
                         decoration: BoxDecoration(
-                          color: AppColors.secondary,
+                          color: _currentUserLocation != null ? AppColors.primary : AppColors.secondary,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 3),
                           boxShadow: const [
@@ -206,7 +286,7 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Píldora de Ciudad
+              // Píldora de Ciudad e indicador GPS
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
@@ -219,10 +299,16 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.location_city_rounded, size: 14, color: AppColors.primary),
+                    Icon(
+                      _currentUserLocation != null ? Icons.gps_fixed_rounded : Icons.location_city_rounded,
+                      size: 14,
+                      color: _currentUserLocation != null ? AppColors.greenDark : AppColors.primary,
+                    ),
                     const SizedBox(width: 5),
                     Text(
-                      'Salamanca, Gto. • ${stores.length} comercios aliados',
+                      _currentUserLocation != null
+                          ? 'GPS Activo • Salamanca, Gto.'
+                          : 'Salamanca, Gto. • ${stores.length} comercios',
                       style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                   ],
@@ -233,7 +319,7 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
 
               // Carrusel de Accesos Rápidos por Comercio
               SizedBox(
-                height: 34,
+                height: 38,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: stores.length,
@@ -242,12 +328,12 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                     final isSelected = _selectedStore?.id == store.id;
 
                     return Padding(
-                      padding: const EdgeInsets.only(right: 6),
+                      padding: const EdgeInsets.only(right: 8),
                       child: InkWell(
                         onTap: () => _flyToStore(store),
                         borderRadius: BorderRadius.circular(18),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
                             color: isSelected ? AppColors.primary : Colors.white,
                             borderRadius: BorderRadius.circular(18),
@@ -261,8 +347,8 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(store.iconEmoji, style: const TextStyle(fontSize: 12)),
-                              const SizedBox(width: 4),
+                              Text(store.iconEmoji, style: const TextStyle(fontSize: 13)),
+                              const SizedBox(width: 5),
                               Text(
                                 store.name,
                                 style: TextStyle(
@@ -290,9 +376,9 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
           child: Column(
             children: [
               _MapRoundButton(
-                icon: Icons.my_location_rounded,
-                tooltip: 'Centrar en mi ubicación',
-                onTap: _centerOnUser,
+                icon: _isLocating ? Icons.hourglass_top_rounded : Icons.my_location_rounded,
+                tooltip: 'Centrar en mi ubicación GPS exacta',
+                onTap: () => _fetchRealLocation(moveCamera: true),
               ),
               const SizedBox(height: 8),
               _MapRoundButton(
@@ -333,7 +419,7 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Fila 1: Icono, Nombre, Dirección y Rating
+                  // Fila 1: Icono, Nombre, Dirección y Distancia Real Calculada
                   Row(
                     children: [
                       Container(
@@ -358,11 +444,30 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
-                            Text(
-                              _selectedStore!.address,
-                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              children: [
+                                const Icon(Icons.star_rounded, size: 13, color: Colors.amber),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '${appState.getStoreAverageRating(_selectedStore!.name)} (${appState.getStoreReviewCount(_selectedStore!.name)})',
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.amber.shade900,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                const Text('•', style: TextStyle(color: Colors.grey, fontSize: 10)),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: Text(
+                                    _selectedStore!.address,
+                                    style: const TextStyle(fontSize: 10.5, color: AppColors.textSecondary),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -380,7 +485,7 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
                             const Icon(Icons.near_me_rounded, size: 12, color: AppColors.primary),
                             const SizedBox(width: 3),
                             Text(
-                              Formatters.formatDistance(_selectedStore!.distanceKm),
+                              Formatters.formatDistance(_getCalculatedDistance(_selectedStore!)),
                               style: const TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,

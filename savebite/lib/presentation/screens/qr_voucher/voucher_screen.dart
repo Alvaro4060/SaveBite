@@ -3,8 +3,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/reservation.dart';
+import '../../state/app_state.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/dynamic_qr_widget.dart';
+import '../../widgets/rate_experience_dialog.dart';
 
 class VoucherScreen extends StatelessWidget {
   final Reservation reservation;
@@ -13,6 +15,9 @@ class VoucherScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppStateProvider.of(context);
+    final currentRes = appState.reservations.where((r) => r.id == reservation.id).firstOrNull ?? reservation;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -211,7 +216,63 @@ class VoucherScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
+
+            // Calificación Post-Canje
+            if (currentRes.isRedeemed && !currentRes.isReviewed) ...[
+              CustomButton(
+                text: '⭐ Calificar Experiencia de Canje',
+                backgroundColor: AppColors.accent,
+                icon: Icons.star_rounded,
+                onPressed: () => RateExperienceDialog.show(context, currentRes),
+              ),
+              const SizedBox(height: 12),
+            ] else if (currentRes.isReviewed) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.amber.shade300),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.stars_rounded, color: Colors.amber, size: 28),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Calificado con ${currentRes.userRating?.toStringAsFixed(1) ?? '5.0'} ★',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber.shade900,
+                            ),
+                          ),
+                          if (currentRes.userReviewComment != null && currentRes.userReviewComment!.isNotEmpty) ...[
+                            const SizedBox(height: 3),
+                            Text(
+                              '"${currentRes.userReviewComment!}"',
+                              style: const TextStyle(
+                                fontSize: 11.5,
+                                fontStyle: FontStyle.italic,
+                                color: AppColors.textSecondary,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
 
             // Botón Regresar
             CustomButton(

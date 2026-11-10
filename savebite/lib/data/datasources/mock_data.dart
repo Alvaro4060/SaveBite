@@ -2,6 +2,7 @@ import '../../domain/entities/food_package.dart';
 import '../../domain/entities/reservation.dart';
 import '../../domain/entities/store.dart';
 import '../../domain/entities/eco_impact.dart';
+import '../../domain/entities/review.dart';
 
 class MockData {
   // Comercios Locales en Salamanca, Gto.
@@ -183,6 +184,9 @@ class MockData {
       co2SavedKg: 1.9,
       foodRescuedKg: 0.9,
       isOfflineCached: true,
+      isReviewed: true,
+      userRating: 5.0,
+      userReviewComment: '¡Increíble la baguette artesanal y la tarta casera! Todo fresco y crujiente, atención de 10.',
     ),
     Reservation(
       id: 'RES-5032-SB',
@@ -198,6 +202,7 @@ class MockData {
       co2SavedKg: 2.3,
       foodRescuedKg: 1.2,
       isOfflineCached: true,
+      isReviewed: false,
     ),
     Reservation(
       id: 'RES-6124-SB',
@@ -213,6 +218,89 @@ class MockData {
       co2SavedKg: 2.6,
       foodRescuedKg: 1.3,
       isOfflineCached: true,
+      isReviewed: false,
+    ),
+  ];
+
+  // Reseñas Iniciales de la Comunidad de Salamanca
+  static final List<Review> initialReviews = [
+    Review(
+      id: 'rev_1',
+      reservationId: 'RES-7419-SB',
+      storeId: 'store_2',
+      storeName: 'Cafetería La Plazuela',
+      packageTitle: 'Pack Café & Baguette de la Tarde',
+      userName: 'Juan Pablo Vega',
+      userInitials: 'JV',
+      rating: 5.0,
+      comment: '¡Increíble la baguette artesanal y la tarta casera! Todo fresco y crujiente, atención de 10.',
+      tags: const ['🥖 Súper Fresco', '💰 Gran Ahorro', '😊 Atención Amable'],
+      createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
+    ),
+    Review(
+      id: 'rev_2',
+      reservationId: 'RES-3301-SB',
+      storeId: 'store_1',
+      storeName: 'Panadería La Tradición',
+      packageTitle: 'Pack Sorpresa Pan Dulce y Bolillo',
+      userName: 'Sofía Munguía',
+      userInitials: 'SM',
+      rating: 5.0,
+      comment: 'Las conchas y los cuernos estaban calientitos todavía. Excelente iniciativa para Salamanca, nos ahorramos más de \$80 pesos.',
+      tags: const ['🥖 Súper Fresco', '💰 Gran Ahorro', '😊 Atención Amable'],
+      createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 6)),
+    ),
+    Review(
+      id: 'rev_3',
+      reservationId: 'RES-2914-SB',
+      storeId: 'store_1',
+      storeName: 'Panadería La Tradición',
+      packageTitle: 'Pack Sorpresa Pan Dulce y Bolillo',
+      userName: 'Carlos G. Arredondo',
+      userInitials: 'CA',
+      rating: 4.8,
+      comment: 'Mucho pan y de muy buena calidad. El bolillo recién salido cruje riquísimo. Volveré a apartar diario.',
+      tags: const ['📦 Muy Abundante', '⚡ Rápido'],
+      createdAt: DateTime.now().subtract(const Duration(days: 2, hours: 4)),
+    ),
+    Review(
+      id: 'rev_4',
+      reservationId: 'RES-1082-SB',
+      storeId: 'store_3',
+      storeName: 'Frutería Don Chente',
+      packageTitle: 'Canasta de Fruta Dulce para Smoothie',
+      userName: 'Lupita Hernández',
+      userInitials: 'LH',
+      rating: 4.7,
+      comment: 'Fruta madura en su punto exacto para hacer licuados familiares. Ahorro sustancial frente al súper.',
+      tags: const ['💰 Gran Ahorro', '📦 Muy Abundante'],
+      createdAt: DateTime.now().subtract(const Duration(days: 3, hours: 1)),
+    ),
+    Review(
+      id: 'rev_5',
+      reservationId: 'RES-4421-SB',
+      storeId: 'store_4',
+      storeName: 'Pastelería Fina Dulce Antojo',
+      packageTitle: 'Caja Sorpresa de Muffins & Pays',
+      userName: 'Alejandro Ruiz',
+      userInitials: 'AR',
+      rating: 5.0,
+      comment: 'Los muffins de arándanos estaban como de cafetería de lujo. Vale totalmente la pena.',
+      tags: const ['🥖 Súper Fresco', '💰 Gran Ahorro'],
+      createdAt: DateTime.now().subtract(const Duration(days: 3, hours: 5)),
+    ),
+    Review(
+      id: 'rev_6',
+      reservationId: 'RES-5532-SB',
+      storeId: 'store_5',
+      storeName: 'Pizzería & Trattoria Nápoles',
+      packageTitle: 'Porciones de Pizza Artesanal',
+      userName: 'Eduardo Mendoza',
+      userInitials: 'EM',
+      rating: 4.6,
+      comment: 'Pizza de masa madre exquisita, 4 rebanadas enormes por \$60 pesos. Insuperable.',
+      tags: const ['💰 Gran Ahorro', '📦 Muy Abundante'],
+      createdAt: DateTime.now().subtract(const Duration(days: 4)),
     ),
   ];
 

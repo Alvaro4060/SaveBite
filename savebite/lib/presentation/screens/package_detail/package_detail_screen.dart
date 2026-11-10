@@ -5,6 +5,7 @@ import '../../../core/constants/app_styles.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/food_package.dart';
 import '../../../domain/entities/reservation.dart';
+import '../../../domain/entities/review.dart';
 import '../../state/app_state.dart';
 import '../../widgets/custom_button.dart';
 import '../qr_voucher/voucher_screen.dart';
@@ -148,9 +149,12 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = AppStateProvider.of(context);
     final pkg = widget.package;
     final discount = pkg.discountPercentage;
     final savings = pkg.originalPrice - pkg.discountedPrice;
+    final storeReviews = appState.getReviewsForStore(pkg.storeName);
+    final avgRating = appState.getStoreAverageRating(pkg.storeName);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -440,7 +444,148 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
               ),
             ),
 
-            const SizedBox(height: 26),
+            const SizedBox(height: 22),
+
+            // Módulo 1: Opiniones y Reseñas de la Comunidad de Salamanca
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '⭐ Reseñas de la Comunidad',
+                  style: AppStyles.heading3,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star_rounded, size: 16, color: Colors.amber),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$avgRating (${storeReviews.length})',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.amber.shade900,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            if (storeReviews.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: AppStyles.cardDecoration,
+                child: const Column(
+                  children: [
+                    Icon(Icons.rate_review_outlined, color: AppColors.textMuted, size: 36),
+                    SizedBox(height: 8),
+                    Text(
+                      'Aún no hay opiniones para este comercio',
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '¡Sé el primero en rescatar y calificar tu experiencia!',
+                      style: TextStyle(fontSize: 11.5, color: AppColors.textMuted),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            else
+              Column(
+                children: storeReviews.take(4).map((review) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundColor: AppColors.primary.withOpacity(0.12),
+                              child: Text(
+                                review.userInitials,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                review.userName,
+                                style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(5, (sIdx) {
+                                return Icon(
+                                  sIdx < review.rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                                  size: 14,
+                                  color: sIdx < review.rating ? Colors.amber : Colors.grey.shade300,
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                        if (review.tags.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: review.tags.map((tag) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceMuted,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                        if (review.comment.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            review.comment,
+                            style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            const SizedBox(height: 20),
 
             // Botón de Reserva Directa
             CustomButton(
