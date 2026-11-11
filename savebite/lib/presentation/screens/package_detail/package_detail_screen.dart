@@ -450,10 +450,15 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '⭐ Reseñas de la Comunidad',
-                  style: AppStyles.heading3,
+                const Expanded(
+                  child: Text(
+                    '⭐ Reseñas de la Comunidad',
+                    style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -540,12 +545,13 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            const SizedBox(width: 6),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(5, (sIdx) {
                                 return Icon(
                                   sIdx < review.rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                                  size: 14,
+                                  size: 13,
                                   color: sIdx < review.rating ? Colors.amber : Colors.grey.shade300,
                                 );
                               }),
